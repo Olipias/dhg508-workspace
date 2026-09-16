@@ -1,0 +1,37 @@
+OCR TEXT — read by eye from pages/canton-1908-p12.png on 2026-09-16.
+Source: Canton Christian College, "Its Field and Work in China" (1908),
+PDF page 12 / printed page 9.
+In the class demo this file stands in for the output of an OCR step; the
+PDF's own text layer is kept beside it as pages/pdf-text-layer-p12.txt
+for comparison — it carries real OCR errors (Novermber, atendanc...).
+
+In 1894 the Trustees took over by purchase from the Board of Foreign
+Missions of the Presbyterian Church its Fati School and property, in the
+suburbs of Canton, after which the College project passed through a period
+of four years without change in the character of that school, which the
+Trustees relinquished and resold to the Board of Foreign Missions in 1898.
+A call was then issued for three Christian educationalists, which resulted
+in sending out Rev. Oscar F. Wisner, M.A., D.D., as president; Andrew H.
+Woods, M.D., and Clancey M. Lewis, B.S. With its new organization the
+College opened June 3, 1899, with six students. In two weeks the number had
+doubled, and by November 6th the secretary had registered twenty-nine boys,
+twenty of whom were in regular attendance. In June of 1900, on account of
+the disturbed condition of China, the school was moved to Macao, a
+Portuguese settlement near Hongkong, where it remained until removed to its
+present location in 1904.
+
+At the opening of the school year, in March, 1904, at Macao, seventy boys
+were enrolled. In 1905, at Canton, seventy-six were enrolled. In 1906, one
+hundred and thirty-five were enrolled, the [line hidden behind a portrait]
+and in 1907, one hundred and [partly hidden]. The number in actual
+attendance being at present about one hundred and forty.
+
+This material evidence of the permanence and steady growth of the College
+is having a marked effect upon the Chinese Church and upon the Chinese
+gentry and officials.
+
+Undoubtedly it will draw attention to the fact that Christianity stands for
+what is best in the life of the nation and give a dignity and power to the
+Christian Church and its institutions.
+
+[Portrait captions] Mr. Henry Martin. Rev. Oscar F. Wisner, D.D. Mr. David Torrens.

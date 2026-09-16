@@ -8,3 +8,4 @@ you come.
 
 - [week-01](week-01/instructions.md) setup, and your first clone
 - [week-02](week-02/instructions.md) a historical question, two sources, and OCR
+- [week-03](week-03/instructions.md) your data, a small database, and one skill
