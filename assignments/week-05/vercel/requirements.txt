@@ -1,0 +1,1 @@
+# 只用到 Python 标准库；此文件用于让 Vercel 识别 Python 运行时。

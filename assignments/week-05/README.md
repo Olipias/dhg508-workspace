@@ -61,7 +61,28 @@ python3 server.py --ask "安克是双休吗？"   # 命令行问一次（联网�
 密钥只放平台的环境变量/Secret，**绝不进 Git**；数据库 `*.db` 不入库，
 由构建命令或启动时的 `ensure_db()` 从 `week-04/data/*.csv` 重建。
 
-### 方案 A · Hugging Face Spaces（2026 起 Docker Space 需 PRO）
+### 方案 A · Vercel Hobby（免卡，推荐）
+
+免信用卡、免费公网 HTTPS。做法：静态 `index.html` + **Python serverless 函数**
+（`api/ask.py`、`api/stats.py`、`api/health.py`），数据库以 base64 内嵌进
+`api/_db.py`（随函数打包，免文件路径问题）。
+
+1. 生成内嵌数据库与页面（数据变更后重跑）：
+   ```bash
+   python3 code/build_vercel.py     # 生成 vercel/api/_db.py + vercel/index.html
+   ```
+2. 推送到 GitHub（`vercel/` 已提交）。
+3. Vercel 控制台 → Add New → **Project** → Import 本仓库。
+4. **Root Directory** 选 `assignments/week-05/vercel`；Framework 选 **Other**（无需构建命令）。
+5. Settings → Environment Variables 加 `DEEPSEEK_API_KEY`（可选 `RATE_LIMIT_PER_MIN=20`）。
+6. Deploy → 得到 `https://<project>.vercel.app`，任何人可打开。
+
+也可以用 CLI（需 Node）：`npm i -g vercel && cd assignments/week-05/vercel && vercel --prod`。
+函数最长 60 秒（`vercel.json` 已设），超时前会返回。
+
+> 说明：Vercel Hobby 声明为个人/非商业用途；课程演示适用。函数冷启动约 1–2 秒。
+
+### 方案 B · Hugging Face Spaces（2026 起 Docker Space 需 PRO）
 
 > 注意：2026 年 HF 政策变更——**Docker/Gradio Space 的免费 `cpu-basic` 需要 PRO 订阅**，
 > 只有 Static Space 免费。想用 Space 跑本应用（Python 服务器）需付费。
@@ -83,7 +104,7 @@ Space 用 Docker SDK，端口 7860。
 
 模板在 `hf_space/`（`README.md` 元数据 + `Dockerfile`）。数据库在镜像构建时由 CSV 重建。
 
-### 方案 B · Render（免费层可用，但别走 Blueprint）
+### 方案 C · Render（免费层可用，但别走 Blueprint）
 
 Render 免费层（Hobby）本身 **$0**，但要注意：
 - **Blueprint 和公共 API 都会要求先绑一张卡**（API 实测返回 `402 Payment information is required`）。免费层不会扣费，但卡要在档。
@@ -104,7 +125,7 @@ Render 免费层（Hobby）本身 **$0**，但要注意：
 
 **其它免卡免费选项**（都支持 Python/容器）：Koyeb 免费实例（0.1 vCPU / 256–512MB，scale-to-zero）、SnapDeploy（512MB，日限部署次数，免卡）、Hugging Face Spaces（Docker，端口改 7860）。免费层通常会休眠/限资源，适合演示。
 
-### 方案 C · Fly.io（Docker）
+### 方案 D · Fly.io（Docker）
 
 仓库根已有 `Dockerfile` 与 `fly.toml`：
 ```bash
@@ -115,7 +136,7 @@ fly deploy
 ```
 `Dockerfile` 在构建期用 CSV 重建数据库；`fly.toml` 里 `internal_port=8080`。
 
-### 方案 D · 任意 VPS / 自建 Docker
+### 方案 E · 任意 VPS / 自建 Docker
 
 ```bash
 docker build -t shuangxiu-app .
