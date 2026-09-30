@@ -68,6 +68,7 @@
   .b-EA { background: rgba(74,222,128,.14); color: var(--accent); border-color: rgba(74,222,128,.4); }
   .b-EB { background: rgba(56,189,248,.12); color: var(--accent2); border-color: rgba(56,189,248,.4); }
   .b-EC { background: rgba(251,191,36,.12); color: var(--warn); border-color: rgba(251,191,36,.4); }
+  .b-ED { background: rgba(148,163,184,.12); color: #94a3b8; border-color: rgba(148,163,184,.35); }
   .quote { border-left: 3px solid var(--line); padding-left: 12px; color: var(--muted); margin: 10px 0; font-size: 14px; }
   .note { color: var(--warn); font-size: 13px; }
   .prods { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
@@ -131,9 +132,10 @@
 
   <div class="footer">
     <div class="legend">
-      证据等级：<b>E-A</b> 官方通知/媒体交叉验证 · <b>E-B</b> 名义双休（员工反馈较稳） · <b>E-C</b> 企业自述/第三方名单/用户提交（仅作参考）。
+      证据等级：<b>E-A</b> 官方通知/媒体交叉验证 · <b>E-B</b> 名义双休（员工反馈较稳） · <b>E-C</b> 企业自述/第三方名单/用户提交（仅作参考） · <b>E-D</b> 未核实（库中收录但查到无公开双休依据，不作推荐）。
     </div>
-    <p>本页只反映<b>公开来源的描述</b>，非用工事实认定，且非穷举；企业作息以其官方最新说明为准。数据来自 week-04 的
+    <p>本页只反映<b>公开来源的描述</b>，非用工事实认定，且非穷举、可能过期或有出入；企业作息以其官方最新说明为准。
+      <b>未收录或标为 E-D（未核实）不代表该企业不是双休</b>。数据来自 week-04 的
       <code>shuangxiu.db</code>，由服务器真实调用 DeepSeek 查库后作答。</p>
   </div>
 </div>
@@ -190,7 +192,7 @@ async function loadStats() {
 }
 
 function badgeE(level) {
-  const cls = level === "E-A" ? "b-EA" : level === "E-B" ? "b-EB" : "b-EC";
+  const cls = level === "E-A" ? "b-EA" : level === "E-B" ? "b-EB" : level === "E-D" ? "b-ED" : "b-EC";
   return `<span class="badge ${cls}">${esc(level || "E-?")}</span>`;
 }
 

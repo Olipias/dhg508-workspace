@@ -27,8 +27,8 @@
 
 ## 行数（目标 ≥200）
 
-sources 8 · industries 42 · cities 33 · categories 28 · evidence_levels 3 ·
-companies 108 · products 189 · claims 108 = **519 行**。
+sources 9 · industries 43 · cities 38 · categories 28 · evidence_levels 4 ·
+companies 122 · products 210 · claims 122 = **576 行**（其中 E-D 未核实 14 家）。
 
 ## 增长流程
 
