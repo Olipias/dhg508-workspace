@@ -64,11 +64,6 @@ def owners() -> list[dict]:
     return out
 
 
-def repos(owner_id: str) -> list[str]:
-    out = call("GET", f"/repos?ownerId={owner_id}&limit=100")
-    return [item["repo"] for item in out]
-
-
 def existing_services(owner_id: str) -> list[dict]:
     out = call("GET", f"/services?ownerId={owner_id}&limit=100")
     return [item["service"] for item in out]
@@ -135,17 +130,12 @@ def main() -> int:
     print(f"owner: {owner_id}  ({own[0]['owner'].get('name','')})")
 
     if args.check:
-        rs = repos(owner_id)
-        print(f"可访问的仓库 {len(rs)} 个；本仓库在列？ {args.repo in rs}")
-        for r in rs[:20]:
-            print("  -", r)
+        svcs = existing_services(owner_id)
+        print(f"现有服务 {len(svcs)} 个：")
+        for s in svcs:
+            print(f"  - {s['name']}  {(s.get('serviceDetails') or {}).get('url','')}")
+        print("GitHub 是否已授权无法预先查询；直接创建即可，若未授权 Render 会报错。")
         return 0
-
-    if args.repo not in repos(owner_id):
-        sys.exit(
-            "该仓库未授权给 Render。请到 Render Dashboard → Account Settings → "
-            "GitHub，授予对本 fork 仓库的访问权限后重试。"
-        )
 
     for s in existing_services(owner_id):
         if s["name"] == args.name:

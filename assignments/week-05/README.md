@@ -63,9 +63,11 @@ python3 server.py --ask "安克是双休吗？"   # 命令行问一次（联网�
 
 ### 方案 A · Render（免费层可用，但别走 Blueprint）
 
-Render 免费层（Hobby）**真的免费且免信用卡**，但有两个坑：
-- **New → Blueprint 会要求绑卡**（`render.yaml` 自动部署那条路）。**改用 Dashboard → New → Web Service 手动创建就免卡。**
-- Render **免费层不支持 Docker 服务**，只支持原生运行时（Python/Node…）。本应用正好是纯 Python，可走免费层。
+Render 免费层（Hobby）本身 **$0**，但要注意：
+- **Blueprint 和公共 API 都会要求先绑一张卡**（API 实测返回 `402 Payment information is required`）。免费层不会扣费，但卡要在档。
+- 想完全免卡，可试 **Dashboard → New → Web Service 手动创建**（有时不强制绑卡）；若也被拦，就换免卡平台。
+- Render **免费层不支持 Docker 服务**，只支持原生运行时（Python/Node…）。本应用正好是纯 Python。
+- 用脚本创建：`assignments/week-05/code/deploy_render.py`（`RENDER_API_KEY` + `DEEPSEEK_API_KEY` 走环境变量）。
 
 手动创建步骤（免卡）：
 1. Render → New → **Web Service** → 选本仓库。
