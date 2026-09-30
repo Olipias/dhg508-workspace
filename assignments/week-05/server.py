@@ -542,6 +542,7 @@ class Handler(BaseHTTPRequestHandler):
         if not question and not image:
             self._json(400, {"error": "请输入问题，或上传一张产品图片"})
             return
+        print(f"[ask] ip={self._client_ip()} img={bool(image)} q={question[:300]!r}", flush=True)
         if not DB_PATH.exists():
             self._json(500, {"error": f"数据库不存在：{DB_PATH}。请先跑 week-04/code/build_db.py"})
             return

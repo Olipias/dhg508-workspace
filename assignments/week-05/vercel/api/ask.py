@@ -50,6 +50,7 @@ class handler(BaseHTTPRequestHandler):
         if not q and not img:
             _json(self, 400, {"error": "请输入问题，或上传一张产品图片"})
             return
+        print(f"[ask] ip={_ip(self)} img={bool(img)} q={q[:300]!r}", flush=True)
         try:
             _json(self, 200, answer(q, img))
         except RuntimeError as e:
