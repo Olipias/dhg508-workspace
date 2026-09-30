@@ -223,30 +223,48 @@ function render(result) {
 let imageData = null;
 let detectedText = "";
 
-function downscale(file, maxSide = 1280, quality = 0.82) {
-  return new Promise((resolve, reject) => {
+async function decodeImage(file) {
+  if (window.createImageBitmap) {
+    try { return await createImageBitmap(file); } catch (_) { /* 换 Image 再试 */ }
+  }
+  return await new Promise((resolve, reject) => {
     const img = new Image();
     const url = URL.createObjectURL(file);
-    img.onload = async () => {
-      const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
-      const w = Math.max(1, Math.round(img.width * scale));
-      const h = Math.max(1, Math.round(img.height * scale));
-      const c = document.createElement("canvas");
-      c.width = w; c.height = h;
-      c.getContext("2d").drawImage(img, 0, 0, w, h);
-      let code = "";
-      try {
-        if ("BarcodeDetector" in window) {
-          const codes = await new BarcodeDetector().detect(img);
-          code = (codes || []).map((x) => x.rawValue).filter(Boolean).join(" ");
-        }
-      } catch (_) { /* 浏览器不支持就跳过 */ }
-      URL.revokeObjectURL(url);
-      resolve({ dataUrl: c.toDataURL("image/jpeg", quality), code });
-    };
-    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("无法读取图片")); };
+    img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("decode")); };
     img.src = url;
   });
+}
+
+async function downscale(file, maxSide = 1280, quality = 0.82) {
+  let src;
+  try {
+    src = await decodeImage(file);
+  } catch (_) {
+    const t = (file.type || "").toLowerCase();
+    const mb = (file.size / 1048576).toFixed(1);
+    const msg = (t.includes("heic") || t.includes("heif"))
+      ? "这张照片是 HEIC/HEIF 格式，浏览器无法解码。请到 设置 → 相机 → 格式 选「兼容性最佳」，或先用系统相机拍完再截图后上传。"
+      : `无法解码该图片（类型 ${file.type || "未知"}，大小 ${mb}MB）。请换一张 JPG/PNG 图片再试。`;
+    throw new Error(msg);
+  }
+  const w0 = src.width || src.naturalWidth;
+  const h0 = src.height || src.naturalHeight;
+  const scale = Math.min(1, maxSide / Math.max(w0, h0));
+  const w = Math.max(1, Math.round(w0 * scale));
+  const h = Math.max(1, Math.round(h0 * scale));
+  const c = document.createElement("canvas");
+  c.width = w; c.height = h;
+  c.getContext("2d").drawImage(src, 0, 0, w, h);
+  let code = "";
+  try {
+    if ("BarcodeDetector" in window) {
+      const codes = await new BarcodeDetector().detect(src);
+      code = (codes || []).map((x) => x.rawValue).filter(Boolean).join(" ");
+    }
+  } catch (_) { /* 浏览器不支持就跳过 */ }
+  if (src.close) { try { src.close(); } catch (_) { /* noop */ } }
+  return { dataUrl: c.toDataURL("image/jpeg", quality), code };
 }
 
 const DEFAULT_HINT = "或直接输入品牌/产品名。拍包装图可自动识别产品与公司。";
