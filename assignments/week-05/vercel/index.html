@@ -57,8 +57,6 @@
   .panel h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); margin: 0 0 14px; font-weight: 600; }
   .answer { font-size: 15.5px; white-space: normal; }
   .answer strong { color: #fff; }
-  .trace { display: flex; flex-wrap: wrap; gap: 8px; }
-  .trace code { background: #0c1014; border: 1px solid var(--line); border-radius: 8px; padding: 3px 9px; font-size: 12.5px; color: var(--accent2); }
   .cards { display: grid; gap: 14px; }
   .card { background: var(--panel2); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
   .card .top { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
@@ -84,6 +82,24 @@
   .legend { color: var(--muted); font-size: 12.5px; margin-top: 8px; }
   .footer { color: var(--muted); font-size: 12.5px; margin-top: 34px; border-top: 1px solid var(--line); padding-top: 16px; }
   .hidden { display: none; }
+
+  /* 手机端适配 */
+  @media (max-width: 560px) {
+    .wrap { padding: 26px 14px 60px; }
+    header h1 { font-size: 27px; }
+    .tagline { font-size: 14px; margin-bottom: 14px; }
+    .searchbar { flex-direction: column; }
+    input[type=text] { width: 100%; }
+    button.ask { width: 100%; padding: 13px 0; }
+    .stat { font-size: 12.5px; padding: 4px 11px; }
+    .panel { padding: 16px 15px; border-radius: 14px; }
+    .panel h2 { margin-bottom: 10px; }
+    .card { padding: 15px; }
+    .card .name { font-size: 16px; }
+    .filebtn { padding: 8px 12px; font-size: 13px; }
+    .preview img { max-height: 88px; max-width: 130px; }
+    .chip { font-size: 12.5px; padding: 6px 11px; }
+  }
 </style>
 </head>
 <body>
@@ -205,18 +221,11 @@ function citationCard(b) {
 
 function render(result) {
   const cites = result.citations || [];
-  const calls = result.tool_calls || [];
-  const trace = calls.length
-    ? `<div class="panel"><h2>查库动作</h2><div class="trace">${calls.map(
-        (c) => `<code>${esc(c.name)}(${esc(JSON.stringify(c.arguments))})</code>`
-      ).join("")}</div></div>`
-    : "";
   const cards = cites.length
     ? `<div class="panel"><h2>命中记录 · ${cites.length}</h2><div class="cards">${cites.map(citationCard).join("")}</div></div>`
     : "";
   $("#output").innerHTML = `
     <div class="panel"><h2>结论</h2><div class="answer">${md(result.answer)}</div></div>
-    ${trace}
     ${cards}`;
 }
 
