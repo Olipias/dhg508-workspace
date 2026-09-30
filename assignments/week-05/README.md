@@ -61,7 +61,25 @@ python3 server.py --ask "安克是双休吗？"   # 命令行问一次（联网�
 密钥只放平台的环境变量/Secret，**绝不进 Git**；数据库 `*.db` 不入库，
 由构建命令或启动时的 `ensure_db()` 从 `week-04/data/*.csv` 重建。
 
-### 方案 A · Render（免费层可用，但别走 Blueprint）
+### 方案 A · Hugging Face Spaces（免卡，推荐）
+
+完全免信用卡、免费公网 HTTPS。Space 用 Docker SDK，端口 7860。
+1. 在 https://huggingface.co/settings/tokens 建一个 **write** 权限 token。
+2. 放进 `assignments/week-05/.env`：`export HF_TOKEN=hf_...`
+3. 部署：
+   ```bash
+   pip install huggingface_hub
+   cd assignments/week-05
+   set -a; . .env; set +a
+   python3 code/deploy_hf.py
+   ```
+   脚本自动：建 Space → 上传 `hf_space/`（server + index + skill + week-04 的 CSV）
+   → 把 `DEEPSEEK_API_KEY` 设为 Space Secret。
+4. 得到 `https://<user>-shuangxiu-app.hf.space`。免费 Space 空闲会休眠，首次访问冷启动几秒。
+
+模板在 `hf_space/`（`README.md` 元数据 + `Dockerfile`）。数据库在镜像构建时由 CSV 重建。
+
+### 方案 B · Render（免费层可用，但别走 Blueprint）
 
 Render 免费层（Hobby）本身 **$0**，但要注意：
 - **Blueprint 和公共 API 都会要求先绑一张卡**（API 实测返回 `402 Payment information is required`）。免费层不会扣费，但卡要在档。
@@ -82,7 +100,7 @@ Render 免费层（Hobby）本身 **$0**，但要注意：
 
 **其它免卡免费选项**（都支持 Python/容器）：Koyeb 免费实例（0.1 vCPU / 256–512MB，scale-to-zero）、SnapDeploy（512MB，日限部署次数，免卡）、Hugging Face Spaces（Docker，端口改 7860）。免费层通常会休眠/限资源，适合演示。
 
-### 方案 B · Fly.io（Docker）
+### 方案 C · Fly.io（Docker）
 
 仓库根已有 `Dockerfile` 与 `fly.toml`：
 ```bash
@@ -93,7 +111,7 @@ fly deploy
 ```
 `Dockerfile` 在构建期用 CSV 重建数据库；`fly.toml` 里 `internal_port=8080`。
 
-### 方案 C · 任意 VPS / 自建 Docker
+### 方案 D · 任意 VPS / 自建 Docker
 
 ```bash
 docker build -t shuangxiu-app .
