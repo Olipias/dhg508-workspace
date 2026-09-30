@@ -35,6 +35,18 @@
     border-radius: 12px; padding: 0 26px; font-size: 16px; font-weight: 700; cursor: pointer;
   }
   button.ask:disabled { opacity: .5; cursor: wait; }
+  .tools { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 12px 0 0; }
+  .filebtn {
+    background: var(--panel2); border: 1px solid var(--line); color: var(--text);
+    border-radius: 10px; padding: 9px 14px; font-size: 14px; cursor: pointer;
+  }
+  .filebtn:hover { border-color: var(--accent2); }
+  .filehint { color: var(--muted); font-size: 12.5px; }
+  .clear { background: transparent; border: 1px solid var(--line); color: var(--muted); border-radius: 10px; padding: 8px 12px; font-size: 13px; cursor: pointer; }
+  .clear:hover { color: var(--danger); border-color: var(--danger); }
+  .preview { margin: 12px 0 0; display: flex; align-items: center; gap: 12px; }
+  .preview img { max-height: 110px; max-width: 160px; border-radius: 10px; border: 1px solid var(--line); }
+  .detected { color: var(--accent2); font-size: 12.5px; }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 30px; }
   .chip {
     background: var(--panel2); border: 1px solid var(--line); color: var(--muted);
@@ -78,7 +90,7 @@
 <div class="wrap">
   <header>
     <h1>双休购<span class="dot">.</span></h1>
-    <p class="tagline">先问企业双不双休，再决定买不买。输入品牌、产品或问题，我查库回答。</p>
+    <p class="tagline">先问企业双不双休，再决定买不买。输入品牌/产品，或拍一张包装图，我查库回答。</p>
     <div class="stats" id="stats"><span class="stat">加载中…</span></div>
   </header>
 
@@ -86,6 +98,17 @@
     <input id="q" type="text" placeholder="例如：安克是双休吗？ / 咖啡有哪些双休公司？" autocomplete="off" />
     <button class="ask" id="ask">查一查</button>
   </div>
+  <div class="tools">
+    <label class="filebtn" for="shot">📷 拍照 / 上传产品</label>
+    <input id="shot" type="file" accept="image/*" capture="environment" hidden />
+    <span id="filehint" class="filehint">或直接输入品牌/产品名。拍包装图可自动识别产品与公司。</span>
+    <button class="clear hidden" id="clearimg">清除图片</button>
+  </div>
+  <div id="preview" class="preview hidden">
+    <img id="previewimg" alt="预览" />
+    <div id="detected" class="detected"></div>
+  </div>
+
   <div class="chips" id="chips"></div>
 
   <section id="output"></section>
@@ -191,16 +214,75 @@ function render(result) {
     ${cards}`;
 }
 
+let imageData = null;
+let detectedText = "";
+
+function downscale(file, maxSide = 1280, quality = 0.82) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = async () => {
+      const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+      const w = Math.max(1, Math.round(img.width * scale));
+      const h = Math.max(1, Math.round(img.height * scale));
+      const c = document.createElement("canvas");
+      c.width = w; c.height = h;
+      c.getContext("2d").drawImage(img, 0, 0, w, h);
+      let code = "";
+      try {
+        if ("BarcodeDetector" in window) {
+          const codes = await new BarcodeDetector().detect(img);
+          code = (codes || []).map((x) => x.rawValue).filter(Boolean).join(" ");
+        }
+      } catch (_) { /* 浏览器不支持就跳过 */ }
+      URL.revokeObjectURL(url);
+      resolve({ dataUrl: c.toDataURL("image/jpeg", quality), code });
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("无法读取图片")); };
+    img.src = url;
+  });
+}
+
+const DEFAULT_HINT = "或直接输入品牌/产品名。拍包装图可自动识别产品与公司。";
+
+$("#shot").addEventListener("change", async (e) => {
+  const f = e.target.files && e.target.files[0];
+  if (!f) return;
+  try {
+    const { dataUrl, code } = await downscale(f);
+    imageData = dataUrl;
+    detectedText = code || "";
+    $("#previewimg").src = dataUrl;
+    $("#preview").classList.remove("hidden");
+    $("#clearimg").classList.remove("hidden");
+    $("#filehint").textContent = "已选图片，点「查一查」识别。";
+    $("#detected").textContent = detectedText ? `识别到条码/二维码：${detectedText}` : "";
+  } catch (err) {
+    alert("读取图片失败：" + err.message);
+  }
+});
+
+$("#clearimg").addEventListener("click", () => {
+  imageData = null; detectedText = "";
+  $("#shot").value = "";
+  $("#preview").classList.add("hidden");
+  $("#clearimg").classList.add("hidden");
+  $("#filehint").textContent = DEFAULT_HINT;
+});
+
 async function ask() {
-  const question = $("#q").value.trim();
-  if (!question) return;
+  const typed = $("#q").value.trim();
+  if (!typed && !imageData) return;
+  const question = detectedText
+    ? `${typed}${typed ? " " : ""}条码/二维码内容：${detectedText}`
+    : typed;
   $("#ask").disabled = true;
-  $("#output").innerHTML = `<div class="panel loading"><div class="spinner"></div>正在查库并请 DeepSeek 作答…</div>`;
+  $("#output").innerHTML = `<div class="panel loading"><div class="spinner"></div>${imageData ? "正在识别图片并查库…" : "正在查库并请 DeepSeek 作答…"}</div>`;
   try {
     const r = await fetch("/api/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question }),
+      body: JSON.stringify({ question, image: imageData || undefined }),
     });
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || ("HTTP " + r.status));

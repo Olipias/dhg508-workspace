@@ -284,10 +284,12 @@ def build_system_prompt() -> str:
         "并介绍它做的生活用品与食品。\n\n"
         "你手上有工具，可以查一个只读数据库。**所有事实必须来自工具返回的行**，"
         "禁止凭记忆补充公司、产品、来源或引文。\n\n"
-        "工作方式：先从用户问题里抽出公司名/品牌/产品或品类关键词，调用 search_shuangxiu 等工具；"
+        "工作方式：先从用户问题（或图片）里抽出公司名/品牌/产品或品类关键词，调用 search_shuangxiu 等工具；"
         "命中后引用 company_id/product_id，给出证据等级（E-A/E-B/E-C）和 source_id 与链接；"
         "库里没有就直说没有。\n\n"
-        "回答格式：先一句结论，再分点列证据与产品，最后给来源。中文回答，简洁。\n\n"
+        "如果用户给了图片：先识别图中的**产品名与公司/品牌名**（读包装文字、logo、条码旁字样），"
+        "把它当作关键词去查库，并在结论里说明你从图中读到了什么；读不出品牌就用产品品类查，仍无则直说。\n\n"
+        "回答格式：先一句结论，再分点列证据与产品，最后给来源。中文回答，简洁，不要长篇。\n\n"
         "以下是必须遵守的原则：\n\n" + principles
     )
 
@@ -305,7 +307,9 @@ def call_deepseek(messages: list[dict], tools: list[dict]) -> dict:
         "tools": tools,
         "tool_choice": "auto",
         "stream": False,
-        "thinking": {"type": "disabled"},
+        "thinking": {"type": "disabled"},   # 非思考模式：更快、更省
+        "temperature": 0.3,                  # 事实型回答，降低随机性
+        "max_tokens": 900,                   # 约束长度，保证响应快
     }
     req = urllib.request.Request(
         API_URL,
@@ -326,12 +330,23 @@ def call_deepseek(messages: list[dict], tools: list[dict]) -> dict:
         raise RuntimeError(f"无法连接 DeepSeek API：{e.reason}") from e
 
 
-def answer(question: str) -> dict:
+def answer(question: str, image: str | None = None) -> dict:
     session = AskSession()
     try:
+        if image:
+            user_content: object = [
+                {
+                    "type": "text",
+                    "text": question
+                    or "请识别图中的产品和公司，并查询该公司是否被公开来源描述为双休，介绍它的产品。",
+                },
+                {"type": "image_url", "image_url": {"url": image}},
+            ]
+        else:
+            user_content = question
         messages = [
             {"role": "system", "content": build_system_prompt()},
-            {"role": "user", "content": question},
+            {"role": "user", "content": user_content},
         ]
         for _ in range(MAX_TOOL_ROUNDS):
             resp = call_deepseek(messages, TOOLS)
@@ -411,6 +426,7 @@ class Handler(BaseHTTPRequestHandler):
                     "db": str(DB_PATH),
                     "db_exists": DB_PATH.exists(),
                     "has_key": bool(os.environ.get("DEEPSEEK_API_KEY")),
+                    "vision": True,
                 },
             )
         elif self.path == "/api/stats":
@@ -438,14 +454,22 @@ class Handler(BaseHTTPRequestHandler):
             self._json(400, {"error": "请求体不是合法 JSON"})
             return
         question = (payload.get("question") or "").strip()
-        if not question:
-            self._json(400, {"error": "请先输入问题"})
+        image = payload.get("image")
+        if image is not None:
+            if not isinstance(image, str) or not image.startswith("data:image/"):
+                self._json(400, {"error": "image 必须是 data:image/... 的 base64 数据 URL"})
+                return
+            if len(image) > 8_000_000:
+                self._json(413, {"error": "图片过大，请压缩后再传"})
+                return
+        if not question and not image:
+            self._json(400, {"error": "请输入问题，或上传一张产品图片"})
             return
         if not DB_PATH.exists():
             self._json(500, {"error": f"数据库不存在：{DB_PATH}。请先跑 week-04/code/build_db.py"})
             return
         try:
-            self._json(200, answer(question))
+            self._json(200, answer(question, image))
         except RuntimeError as e:
             self._json(502, {"error": str(e)})
         except Exception as e:  # noqa: BLE001
