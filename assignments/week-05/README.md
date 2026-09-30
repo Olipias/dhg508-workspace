@@ -61,9 +61,13 @@ python3 server.py --ask "安克是双休吗？"   # 命令行问一次（联网�
 密钥只放平台的环境变量/Secret，**绝不进 Git**；数据库 `*.db` 不入库，
 由构建命令或启动时的 `ensure_db()` 从 `week-04/data/*.csv` 重建。
 
-### 方案 A · Hugging Face Spaces（免卡，推荐）
+### 方案 A · Hugging Face Spaces（2026 起 Docker Space 需 PRO）
 
-完全免信用卡、免费公网 HTTPS。Space 用 Docker SDK，端口 7860。
+> 注意：2026 年 HF 政策变更——**Docker/Gradio Space 的免费 `cpu-basic` 需要 PRO 订阅**，
+> 只有 Static Space 免费。想用 Space 跑本应用（Python 服务器）需付费。
+> 本方案保留给有 HF PRO 的情况；免卡请见下面的替代方案。
+
+Space 用 Docker SDK，端口 7860。
 1. 在 https://huggingface.co/settings/tokens 建一个 **write** 权限 token。
 2. 放进 `assignments/week-05/.env`：`export HF_TOKEN=hf_...`
 3. 部署：
