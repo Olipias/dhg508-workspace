@@ -80,6 +80,13 @@ python3 server.py --ask "安克是双休吗？"   # 命令行问一次（联网�
 也可以用 CLI（需 Node）：`npm i -g vercel && cd assignments/week-05/vercel && vercel --prod`。
 函数最长 60 秒（`vercel.json` 已设），超时前会返回。
 
+**已部署（Hobby，免卡）**：https://shuangxiu-app.vercel.app
+- 注意：Vercel 新项目默认开启「部署保护（Vercel Authentication）」，需在
+  Project → Settings → Deployment Protection 关掉，或由 `deploy_vercel.py` 里
+  那样把 `ssoProtection` 置空，公网才能访问。
+- 实现注意：Vercel 只把项目根加入 `sys.path`，`/api` 不在其中；各 handler 顶部
+  已 `sys.path.insert(0, 所在目录)` 后才能 `from _lib import ...`。
+
 > 说明：Vercel Hobby 声明为个人/非商业用途；课程演示适用。函数冷启动约 1–2 秒。
 
 ### 方案 B · Hugging Face Spaces（2026 起 Docker Space 需 PRO）

@@ -1,7 +1,11 @@
 import json
+import os
+import sys
 from http.server import BaseHTTPRequestHandler
 
-from _lib import MAX_BODY, answer, rate_ok
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from _lib import MAX_BODY, answer, rate_ok  # noqa: E402
 
 
 def _json(h, code, obj):

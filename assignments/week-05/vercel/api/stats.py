@@ -1,7 +1,11 @@
 import json
+import os
+import sys
 from http.server import BaseHTTPRequestHandler
 
-from _lib import connect, db_stats
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from _lib import connect, db_stats  # noqa: E402
 
 
 class handler(BaseHTTPRequestHandler):
