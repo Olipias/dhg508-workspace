@@ -9,7 +9,7 @@
 | 文件 | 是什么 |
 |---|---|
 | `data/*.csv` | 建库源数据（唯一真源），每行带 `source_id`/`source_locator`/`note` |
-| `artifacts/shuangxiu.db` | SQLite：8 表、11 外键、**494 行**（生成物，`.gitignore` 忽略） |
+| `artifacts/shuangxiu.db` | SQLite：8 表、11 外键、**519 行**（生成物，`.gitignore` 忽略） |
 | `code/seed_data.py` | 从公开来源生成 CSV（含日期换算） |
 | `code/build_db.py` | CSV → SQLite，建表 + 外键检查 |
 | `code/check_rows.py` | 随机抽 20 行回源核对 → `research/checks.md` |
