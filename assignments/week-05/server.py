@@ -1,21 +1,29 @@
 #!/usr/bin/env python3
-"""双休购 · 本地小应用服务器（无第三方依赖）。
+"""双休购 · 小应用服务器（无第三方依赖，可本地也可上云）。
 
-一个网页 + 一台本地服务器：网页把问题发给本服务器，服务器**真实调用
-DeepSeek**（function calling），让模型自己去查 `week-04` 的双休公司/产品库，
-再据查到的行作答。
+一个网页 + 一台服务器：网页（含手机拍照上传）把问题发给本服务器，服务器
+**真实调用 DeepSeek**（function calling + 视觉），让模型自己去查 `week-04`
+的双休公司/产品库，再据查到的行作答。任何人都能用浏览器打开。
 
+本地运行：
     export DEEPSEEK_API_KEY=sk-...        # 见 .env.example，绝不写进 Git
-    python3 server.py                     # 默认 http://127.0.0.1:8000
-    python3 server.py --selftest          # 只测库和工具的连通性，不联网
+    python3 server.py                     # 默认监听 0.0.0.0:8000
+    HOST=127.0.0.1 python3 server.py      # 只允许本机访问
+    python3 server.py --selftest          # 只测库和工具，不联网
     python3 server.py --ask "安克是双休吗？"  # 命令行问一次（联网，真实调用）
 
+上云（Render/Fly/VPS）：见 week-05/README.md 的「部署」一节。
+容器/平台通常注入 `PORT`；`HOST` 默认 0.0.0.0。
+
 环境变量：
-    DEEPSEEK_API_KEY   必填，真实调用用
-    SHUANGXIU_DB       可选，默认 ../week-04/artifacts/shuangxiu.db
-    DEEPSEEK_MODEL     可选，默认 deepseek-flash
-    DEEPSEEK_API_URL   可选，默认 https://api.deepseek.com/chat/completions
-    PORT               可选，默认 8000
+    DEEPSEEK_API_KEY    必填，真实调用用
+    SHUANGXIU_DB        可选，默认 ../week-04/artifacts/shuangxiu.db
+    DEEPSEEK_MODEL      可选，默认 deepseek-flash
+    DEEPSEEK_API_URL    可选，默认 https://api.deepseek.com/chat/completions
+    PORT                可选，默认 8000
+    HOST                可选，默认 0.0.0.0
+    RATE_LIMIT_PER_MIN  可选，每 IP 每分钟请求上限，默认 20（防公网被刷爆额度）
+    ALLOW_ORIGIN        可选，CORS 允许来源，默认 *（本地够用；公网可按需收紧）
 """
 
 from __future__ import annotations
@@ -24,7 +32,10 @@ import json
 import os
 import re
 import sqlite3
+import subprocess
 import sys
+import threading
+import time
 import urllib.error
 import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -39,7 +50,42 @@ API_URL = os.environ.get(
 )
 MODEL = os.environ.get("DEEPSEEK_MODEL", "deepseek-flash")
 PORT = int(os.environ.get("PORT", "8000"))
+HOST = os.environ.get("HOST", "0.0.0.0")
 MAX_TOOL_ROUNDS = 6
+MAX_BODY = 12_000_000  # 请求体上限（含 base64 图片）
+RATE_LIMIT_PER_MIN = int(os.environ.get("RATE_LIMIT_PER_MIN", "20"))
+ALLOW_ORIGIN = os.environ.get("ALLOW_ORIGIN", "*")
+
+# 简单按 IP 限流，防止公网部署后额度被刷爆
+_hits: dict[str, list[float]] = {}
+_hits_lock = threading.Lock()
+
+
+def rate_ok(ip: str) -> bool:
+    now = time.time()
+    with _hits_lock:
+        q = [t for t in _hits.get(ip, []) if now - t < 60]
+        if len(q) >= RATE_LIMIT_PER_MIN:
+            _hits[ip] = q
+            return False
+        q.append(now)
+        _hits[ip] = q
+        return True
+
+
+def ensure_db() -> bool:
+    """库不存在时，用 week-04 的 CSV 自动重建（容器/云上首次启动用）。"""
+    if DB_PATH.exists():
+        return True
+    code_dir = ROOT.parent / "week-04" / "code"
+    seed, build = code_dir / "seed_data.py", code_dir / "build_db.py"
+    if not build.exists():
+        return False
+    print(f"[init] 数据库缺失，从 CSV 重建：{build}")
+    if seed.exists():
+        subprocess.run([sys.executable, str(seed)], check=False)
+    subprocess.run([sys.executable, str(build)], check=False)
+    return DB_PATH.exists()
 
 # --------------------------------------------------------------------------
 # 数据库：只读地查 week-04 的库，每个工具都返回带来源的结构化行
@@ -409,11 +455,26 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", ctype)
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Cache-Control", "no-store")
+        self.send_header("Access-Control-Allow-Origin", ALLOW_ORIGIN)
         self.end_headers()
         self.wfile.write(body)
 
     def _json(self, code: int, obj: object):
         self._send(code, json.dumps(obj, ensure_ascii=False).encode("utf-8"), "application/json; charset=utf-8")
+
+    def _client_ip(self) -> str:
+        fwd = self.headers.get("X-Forwarded-For")
+        if fwd:
+            return fwd.split(",")[0].strip()
+        return self.client_address[0]
+
+    def do_OPTIONS(self):
+        self.send_response(204)
+        self.send_header("Access-Control-Allow-Origin", ALLOW_ORIGIN)
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.send_header("Content-Length", "0")
+        self.end_headers()
 
     def do_GET(self):
         if self.path in ("/", "/index.html"):
@@ -450,7 +511,13 @@ class Handler(BaseHTTPRequestHandler):
         if self.path != "/api/ask":
             self._json(404, {"error": "not found"})
             return
+        if not rate_ok(self._client_ip()):
+            self._json(429, {"error": "请求过于频繁，请稍后再试"})
+            return
         length = int(self.headers.get("Content-Length", "0"))
+        if length > MAX_BODY:
+            self._json(413, {"error": "请求体过大，请压缩图片后再传"})
+            return
         try:
             payload = json.loads(self.rfile.read(length).decode("utf-8") or "{}")
         except json.JSONDecodeError:
@@ -513,13 +580,16 @@ def main() -> int:
             print("用法：python3 server.py --ask \"你的问题\"", file=sys.stderr)
             return 1
         return cli_ask(q)
-    if not DB_PATH.exists():
-        print(f"[warn] 数据库不存在：{DB_PATH}", file=sys.stderr)
-        print("[warn] 先跑：python3 ../week-04/code/build_db.py", file=sys.stderr)
+    if not ensure_db():
+        print(f"[warn] 数据库不存在且无法自动重建：{DB_PATH}", file=sys.stderr)
+        print("[warn] 先跑：python3 week-04/code/build_db.py", file=sys.stderr)
     if not os.environ.get("DEEPSEEK_API_KEY"):
         print("[warn] 未设 DEEPSEEK_API_KEY，/api/ask 会返回错误提示。", file=sys.stderr)
-    httpd = ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
-    print(f"双休购 running at http://127.0.0.1:{PORT}  (model={MODEL})")
+    httpd = ThreadingHTTPServer((HOST, PORT), Handler)
+    print(f"双休购 running at http://{HOST}:{PORT}  (model={MODEL}, rate={RATE_LIMIT_PER_MIN}/min)")
+    if HOST in ("0.0.0.0", "::"):
+        print(f"本机访问：http://127.0.0.1:{PORT}")
+        print("局域网/公网：用本机公网 IP 或平台分配的域名访问")
     print("Ctrl+C 停止")
     try:
         httpd.serve_forever()

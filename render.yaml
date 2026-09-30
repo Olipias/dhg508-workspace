@@ -1,0 +1,18 @@
+# Render Blueprint：把「双休购」app 部署成公网网页。
+# 用法：Render 控制台 New + Blueprint，选中本仓库，它会读取本文件。
+# 部署后在服务的 Environment 里填 DEEPSEEK_API_KEY（只存于 Render，不进 Git）。
+services:
+  - type: web
+    name: shuangxiu-app
+    runtime: python
+    plan: free
+    # 构建期用 CSV 重建数据库（*.db 不入 Git），并让 CSV 变更可复现
+    buildCommand: python3 assignments/week-04/code/seed_data.py && python3 assignments/week-04/code/build_db.py
+    startCommand: python3 assignments/week-05/server.py
+    envVars:
+      - key: DEEPSEEK_API_KEY
+        sync: false          # 在控制台填写，不写入仓库
+      - key: HOST
+        value: 0.0.0.0
+      - key: RATE_LIMIT_PER_MIN
+        value: "20"

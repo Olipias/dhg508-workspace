@@ -1,0 +1,2 @@
+# 双休购 app 只用 Python 标准库，无第三方依赖。
+# 保留此文件，便于 PaaS（如 Render）识别为 Python 运行时。

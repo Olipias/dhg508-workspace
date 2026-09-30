@@ -52,3 +52,47 @@ python3 server.py --ask "安克是双休吗？"   # 命令行问一次（联网�
 
 只反映**公开来源的描述**，非用工事实认定、非穷举；企业作息以其官方最新说明为准。
 `DEEPSEEK_API_KEY` 只从环境变量读取，`.env` 已被 `.gitignore` 忽略。
+
+## 部署（公网，任何人有链接即可打开）
+
+这是一台普通服务器 + 一个网页，与 opencode 无关。上云后，手机打开链接，
+用**系统相机**拍照上传 → 服务器调用 DeepSeek 视觉识别产品/公司 → 查库判别是否双休。
+
+密钥只放平台的环境变量/Secret，**绝不进 Git**；数据库 `*.db` 不入库，
+由构建命令或启动时的 `ensure_db()` 从 `week-04/data/*.csv` 重建。
+
+### 方案 A · Render（最简单，免费层）
+
+仓库根已有 `render.yaml`（Blueprint）：
+1. Render 控制台 → New → Blueprint → 选本仓库。
+2. 部署后在该服务的 **Environment** 填 `DEEPSEEK_API_KEY`（`sync:false` 会提示你填）。
+3. 得到形如 `https://shuangxiu-app.onrender.com` 的公网地址，任何人可打开。
+
+构建/启动命令（也可手动建 Web Service 时填）：
+- Build：`python3 assignments/week-04/code/seed_data.py && python3 assignments/week-04/code/build_db.py`
+- Start：`python3 assignments/week-05/server.py`（平台会注入 `PORT`）
+
+### 方案 B · Fly.io（Docker）
+
+仓库根已有 `Dockerfile` 与 `fly.toml`：
+```bash
+# 在仓库根目录
+fly launch --no-deploy           # app 名改成全局唯一
+fly secrets set DEEPSEEK_API_KEY=sk-...
+fly deploy
+```
+`Dockerfile` 在构建期用 CSV 重建数据库；`fly.toml` 里 `internal_port=8080`。
+
+### 方案 C · 任意 VPS / 自建 Docker
+
+```bash
+docker build -t shuangxiu-app .
+docker run -d -p 8000:8000 -e DEEPSEEK_API_KEY=sk-... --name shuangxiu shuangxiu-app
+# 反代（Nginx/Caddy）到 https 域名即可让任何人访问
+```
+
+### 公网安全
+
+- `RATE_LIMIT_PER_MIN`（默认 20）按 IP 限流，避免额度被刷爆；可用环境变量调低。
+- 请求体上限 12MB，图片在浏览器端已压到 ≤1280px。
+- 如需，可加访问口令或改用带鉴权的网关（未内置，按需扩展）。
