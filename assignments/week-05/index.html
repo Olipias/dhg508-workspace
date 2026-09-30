@@ -118,7 +118,7 @@
       证据等级：<b>E-A</b> 官方通知/媒体交叉验证 · <b>E-B</b> 名义双休（员工反馈较稳） · <b>E-C</b> 企业自述/第三方名单/用户提交（仅作参考）。
     </div>
     <p>本页只反映<b>公开来源的描述</b>，非用工事实认定，且非穷举；企业作息以其官方最新说明为准。数据来自 week-04 的
-      <code>shuangxiu.db</code>，由本地服务器真实调用 DeepSeek 查询后作答。</p>
+      <code>shuangxiu.db</code>，由服务器真实调用 DeepSeek 查库后作答。</p>
   </div>
 </div>
 
@@ -139,8 +139,8 @@ const EXAMPLES = [
   "胖东来有什么产品？",
   "咖啡有哪些双休公司？",
   "E-A 证据的公司都有谁？",
+  "味事达酱油是哪家公司做的？",
   "这个库有多少数据、来源是什么？",
-  "帮我点一份汉堡王。",
 ];
 
 function renderChips() {
@@ -150,7 +150,13 @@ function renderChips() {
   );
 }
 
+const IS_FILE = location.protocol === "file:";
+
 async function loadStats() {
+  if (IS_FILE) {
+    $("#stats").innerHTML = `<span class="stat error">请用部署地址打开（本地直接双击 .html 无法访问 /api 接口）</span>`;
+    return;
+  }
   try {
     const r = await fetch("/api/stats");
     const s = await r.json();
@@ -271,6 +277,10 @@ $("#clearimg").addEventListener("click", () => {
 });
 
 async function ask() {
+  if (IS_FILE) {
+    $("#output").innerHTML = `<div class="panel"><h2>提示</h2><div class="error">本地直接打开 .html 无法访问接口，请用部署地址（如 https://shuangxiu-app.vercel.app）打开。</div></div>`;
+    return;
+  }
   const typed = $("#q").value.trim();
   if (!typed && !imageData) return;
   const question = detectedText
