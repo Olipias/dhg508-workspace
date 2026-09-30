@@ -61,16 +61,24 @@ python3 server.py --ask "安克是双休吗？"   # 命令行问一次（联网�
 密钥只放平台的环境变量/Secret，**绝不进 Git**；数据库 `*.db` 不入库，
 由构建命令或启动时的 `ensure_db()` 从 `week-04/data/*.csv` 重建。
 
-### 方案 A · Render（最简单，免费层）
+### 方案 A · Render（免费层可用，但别走 Blueprint）
 
-仓库根已有 `render.yaml`（Blueprint）：
-1. Render 控制台 → New → Blueprint → 选本仓库。
-2. 部署后在该服务的 **Environment** 填 `DEEPSEEK_API_KEY`（`sync:false` 会提示你填）。
-3. 得到形如 `https://shuangxiu-app.onrender.com` 的公网地址，任何人可打开。
+Render 免费层（Hobby）**真的免费且免信用卡**，但有两个坑：
+- **New → Blueprint 会要求绑卡**（`render.yaml` 自动部署那条路）。**改用 Dashboard → New → Web Service 手动创建就免卡。**
+- Render **免费层不支持 Docker 服务**，只支持原生运行时（Python/Node…）。本应用正好是纯 Python，可走免费层。
 
-构建/启动命令（也可手动建 Web Service 时填）：
-- Build：`python3 assignments/week-04/code/seed_data.py && python3 assignments/week-04/code/build_db.py`
-- Start：`python3 assignments/week-05/server.py`（平台会注入 `PORT`）
+手动创建步骤（免卡）：
+1. Render → New → **Web Service** → 选本仓库。
+2. Runtime：**Python**（不要选 Docker）。
+3. Build Command：`python3 assignments/week-04/code/seed_data.py && python3 assignments/week-04/code/build_db.py`
+4. Start Command：`python3 assignments/week-05/server.py`（Render 会注入 `PORT`）
+5. Instance Type：**Free**。
+6. Environment 加：`DEEPSEEK_API_KEY=sk-...`、`HOST=0.0.0.0`、`RATE_LIMIT_PER_MIN=20`。
+7. 部署后得到 `https://<name>.onrender.com`，任何人可打开。免费层 15 分钟空闲会休眠，首次访问冷启动约 30–60 秒。
+
+> `render.yaml` 保留作参考；若改用 Blueprint，会被要求绑卡，且要用 `plan: free` + 不挂磁盘。
+
+**其它免卡免费选项**（都支持 Python/容器）：Koyeb 免费实例（0.1 vCPU / 256–512MB，scale-to-zero）、SnapDeploy（512MB，日限部署次数，免卡）、Hugging Face Spaces（Docker，端口改 7860）。免费层通常会休眠/限资源，适合演示。
 
 ### 方案 B · Fly.io（Docker）
 
