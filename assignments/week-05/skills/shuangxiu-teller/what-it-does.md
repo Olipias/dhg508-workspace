@@ -25,8 +25,9 @@
    产品查 `products.name`，也可按 `categories`/`industries` 反查公司）。
 2. **取证**：命中后取出 `schedule_type`、`evidence_level`、`schedule_original`、
    `source_id` 与 `sources.url`；产品再连 `categories`。
-3. **成答**：先给结论，再给**证据等级**，最后给代表产品与来源链接。
-   公司/产品都要带 `[company_id]`/`[product_id]`。
+3. **成答**（面向用户，简洁）：一句话结论 → 1–3 句关键信息与代表产品 →
+   证据强度用自然语言 → 最后一行「来源：名称 + 链接」。
+   **不显示任何编号**（company_id / product_id / source_id）或 E-A/B 代号。
 
 ## 证据等级（回答必须声明）
 

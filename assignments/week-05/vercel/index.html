@@ -138,7 +138,7 @@
 
   <div class="footer">
     <div class="legend">
-      证据等级：<b>E-A</b> 官方通知/媒体交叉验证 · <b>E-B</b> 名义双休（员工反馈较稳） · <b>E-C</b> 企业自述/第三方名单/用户提交（仅作参考） · <b>E-D</b> 未核实（库中收录但查到无公开双休依据，不作推荐）。
+      证据强度：<b>证据较强</b>（官方通知/媒体交叉验证） · <b>名义双休</b>（员工反馈较稳） · <b>证据较弱</b>（仅供参考） · <b>未核实</b>（未查到公开双休依据，不作推荐）。
     </div>
     <p>本页只反映<b>公开来源的描述</b>，非用工事实认定，且非穷举、可能过期或有出入；企业作息以其官方最新说明为准。
       <b>未收录或标为 E-D（未核实）不代表该企业不是双休</b>。数据来自 week-04 的
@@ -197,31 +197,31 @@ async function loadStats() {
   }
 }
 
+const EV_TEXT = {
+  "E-A": "证据较强",
+  "E-B": "名义双休（员工反馈较稳）",
+  "E-C": "证据较弱，仅供参考",
+  "E-D": "未查到公开双休依据，不作推荐",
+};
+
 function badgeE(level) {
   const cls = level === "E-A" ? "b-EA" : level === "E-B" ? "b-EB" : level === "E-D" ? "b-ED" : "b-EC";
-  return `<span class="badge ${cls}">${esc(level || "E-?")}</span>`;
+  return `<span class="badge ${cls}">${esc(EV_TEXT[level] || "证据情况未知")}</span>`;
 }
 
 function citationCard(b) {
-  const prods = (b.products || []).map(
-    (p) => `<span class="prod">${esc(p.name)}${p.category ? ` <span>${esc(p.category)}</span>` : ""}</span>`
-  ).join("");
+  const prods = (b.products || []).map((p) => `<span class="prod">${esc(p.name)}</span>`).join("");
   const src = b.source_url
-    ? `<a class="src" href="${esc(b.source_url)}" target="_blank" rel="noopener">来源 ${esc(b.source_id)} · ${esc(b.source_title || "")}</a>`
+    ? `<a class="src" href="${esc(b.source_url)}" target="_blank" rel="noopener">来源：${esc(b.source_title || "查看来源")}</a>`
     : "";
   return `
     <div class="card">
-      <div class="top">
-        <span class="name">${esc(b.name_zh)}</span>
-        <span class="id">[${esc(b.company_id)}]${b.name_en ? " " + esc(b.name_en) : ""}</span>
-      </div>
+      <div class="top"><span class="name">${esc(b.name_zh)}</span></div>
       <div class="badges">
         <span class="badge b-sched">${esc(b.schedule_type || "—")}</span>
         ${badgeE(b.evidence_level)}
         <span class="badge">${esc(b.industry || "")}${b.city ? " · " + esc(b.city) : ""}</span>
       </div>
-      ${b.schedule_original ? `<div class="quote">“${esc(b.schedule_original)}”</div>` : ""}
-      ${b.note ? `<div class="note">note：${esc(b.note)}</div>` : ""}
       ${prods ? `<div class="prods">${prods}</div>` : ""}
       <div style="margin-top:10px">${src}</div>
     </div>`;
