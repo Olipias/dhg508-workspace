@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>双休购 · 先问企业双不双休，再决定买不买</title>
+<style>
+  :root {
+    --bg: #0f1216; --panel: #171c22; --panel2: #1e242c;
+    --line: #2a323c; --text: #e8edf3; --muted: #93a1b1;
+    --accent: #4ade80; --accent2: #38bdf8; --warn: #fbbf24;
+    --danger: #f87171;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: radial-gradient(1200px 600px at 50% -10%, #1b2733 0%, var(--bg) 55%);
+    color: var(--text); font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    line-height: 1.65; min-height: 100vh;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 40px 20px 80px; }
+  header h1 { font-size: 34px; margin: 0 0 6px; letter-spacing: 1px; }
+  header h1 .dot { color: var(--accent); }
+  .tagline { color: var(--muted); margin: 0 0 18px; }
+  .stats { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 26px; }
+  .stat { background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 5px 14px; font-size: 13px; color: var(--muted); }
+  .stat b { color: var(--text); }
+  .searchbar { display: flex; gap: 10px; }
+  input[type=text] {
+    flex: 1; background: var(--panel); border: 1px solid var(--line); color: var(--text);
+    border-radius: 12px; padding: 15px 18px; font-size: 16px; outline: none;
+  }
+  input[type=text]:focus { border-color: var(--accent2); }
+  button.ask {
+    background: linear-gradient(180deg, #4ade80, #22c55e); color: #05230f; border: 0;
+    border-radius: 12px; padding: 0 26px; font-size: 16px; font-weight: 700; cursor: pointer;
+  }
+  button.ask:disabled { opacity: .5; cursor: wait; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 30px; }
+  .chip {
+    background: var(--panel2); border: 1px solid var(--line); color: var(--muted);
+    border-radius: 999px; padding: 6px 13px; font-size: 13px; cursor: pointer;
+  }
+  .chip:hover { color: var(--text); border-color: var(--accent2); }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 22px 24px; margin-bottom: 18px; }
+  .panel h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); margin: 0 0 14px; font-weight: 600; }
+  .answer { font-size: 15.5px; white-space: normal; }
+  .answer strong { color: #fff; }
+  .trace { display: flex; flex-wrap: wrap; gap: 8px; }
+  .trace code { background: #0c1014; border: 1px solid var(--line); border-radius: 8px; padding: 3px 9px; font-size: 12.5px; color: var(--accent2); }
+  .cards { display: grid; gap: 14px; }
+  .card { background: var(--panel2); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+  .card .top { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .card .name { font-size: 17px; font-weight: 700; }
+  .card .id { color: var(--muted); font-size: 12.5px; }
+  .badges { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+  .badge { font-size: 12px; border-radius: 999px; padding: 3px 10px; border: 1px solid var(--line); }
+  .b-sched { background: rgba(74,222,128,.12); color: var(--accent); border-color: rgba(74,222,128,.35); }
+  .b-EA { background: rgba(74,222,128,.14); color: var(--accent); border-color: rgba(74,222,128,.4); }
+  .b-EB { background: rgba(56,189,248,.12); color: var(--accent2); border-color: rgba(56,189,248,.4); }
+  .b-EC { background: rgba(251,191,36,.12); color: var(--warn); border-color: rgba(251,191,36,.4); }
+  .quote { border-left: 3px solid var(--line); padding-left: 12px; color: var(--muted); margin: 10px 0; font-size: 14px; }
+  .note { color: var(--warn); font-size: 13px; }
+  .prods { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+  .prod { background: #0c1014; border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; font-size: 13px; }
+  .prod span { color: var(--muted); font-size: 11.5px; }
+  a.src { color: var(--accent2); font-size: 13px; text-decoration: none; }
+  a.src:hover { text-decoration: underline; }
+  .loading { color: var(--muted); display: flex; align-items: center; gap: 10px; }
+  .spinner { width: 16px; height: 16px; border: 2px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error { color: var(--danger); }
+  .legend { color: var(--muted); font-size: 12.5px; margin-top: 8px; }
+  .footer { color: var(--muted); font-size: 12.5px; margin-top: 34px; border-top: 1px solid var(--line); padding-top: 16px; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>双休购<span class="dot">.</span></h1>
+    <p class="tagline">先问企业双不双休，再决定买不买。输入品牌、产品或问题，我查库回答。</p>
+    <div class="stats" id="stats"><span class="stat">加载中…</span></div>
+  </header>
+
+  <div class="searchbar">
+    <input id="q" type="text" placeholder="例如：安克是双休吗？ / 咖啡有哪些双休公司？" autocomplete="off" />
+    <button class="ask" id="ask">查一查</button>
+  </div>
+  <div class="chips" id="chips"></div>
+
+  <section id="output"></section>
+
+  <div class="footer">
+    <div class="legend">
+      证据等级：<b>E-A</b> 官方通知/媒体交叉验证 · <b>E-B</b> 名义双休（员工反馈较稳） · <b>E-C</b> 企业自述/第三方名单/用户提交（仅作参考）。
+    </div>
+    <p>本页只反映<b>公开来源的描述</b>，非用工事实认定，且非穷举；企业作息以其官方最新说明为准。数据来自 week-04 的
+      <code>shuangxiu.db</code>，由本地服务器真实调用 DeepSeek 查询后作答。</p>
+  </div>
+</div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+function md(text) {
+  let h = esc(text);
+  h = h.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  h = h.replace(/`(.+?)`/g, "<code>$1</code>");
+  h = h.replace(/^[-*]\s+(.*)$/gm, "• $1");
+  return h.replace(/\n/g, "<br>");
+}
+
+const EXAMPLES = [
+  "安克是双休吗？",
+  "胖东来有什么产品？",
+  "咖啡有哪些双休公司？",
+  "E-A 证据的公司都有谁？",
+  "这个库有多少数据、来源是什么？",
+  "帮我点一份汉堡王。",
+];
+
+function renderChips() {
+  $("#chips").innerHTML = EXAMPLES.map((e) => `<span class="chip">${esc(e)}</span>`).join("");
+  document.querySelectorAll(".chip").forEach((el) =>
+    el.addEventListener("click", () => { $("#q").value = el.textContent; ask(); })
+  );
+}
+
+async function loadStats() {
+  try {
+    const r = await fetch("/api/stats");
+    const s = await r.json();
+    if (s.error) throw new Error(s.error);
+    const ev = s.by_evidence || {};
+    $("#stats").innerHTML = [
+      `<span class="stat"><b>${s.companies}</b> 家公司</span>`,
+      `<span class="stat"><b>${s.products}</b> 个产品</span>`,
+      `<span class="stat"><b>${s.sources}</b> 个来源</span>`,
+      `<span class="stat">E-A <b>${ev["E-A"] || 0}</b> · E-B <b>${ev["E-B"] || 0}</b> · E-C <b>${ev["E-C"] || 0}</b></span>`,
+    ].join("");
+  } catch (e) {
+    $("#stats").innerHTML = `<span class="stat error">读库失败：${esc(e.message)}</span>`;
+  }
+}
+
+function badgeE(level) {
+  const cls = level === "E-A" ? "b-EA" : level === "E-B" ? "b-EB" : "b-EC";
+  return `<span class="badge ${cls}">${esc(level || "E-?")}</span>`;
+}
+
+function citationCard(b) {
+  const prods = (b.products || []).map(
+    (p) => `<span class="prod">${esc(p.name)}${p.category ? ` <span>${esc(p.category)}</span>` : ""}</span>`
+  ).join("");
+  const src = b.source_url
+    ? `<a class="src" href="${esc(b.source_url)}" target="_blank" rel="noopener">来源 ${esc(b.source_id)} · ${esc(b.source_title || "")}</a>`
+    : "";
+  return `
+    <div class="card">
+      <div class="top">
+        <span class="name">${esc(b.name_zh)}</span>
+        <span class="id">[${esc(b.company_id)}]${b.name_en ? " " + esc(b.name_en) : ""}</span>
+      </div>
+      <div class="badges">
+        <span class="badge b-sched">${esc(b.schedule_type || "—")}</span>
+        ${badgeE(b.evidence_level)}
+        <span class="badge">${esc(b.industry || "")}${b.city ? " · " + esc(b.city) : ""}</span>
+      </div>
+      ${b.schedule_original ? `<div class="quote">“${esc(b.schedule_original)}”</div>` : ""}
+      ${b.note ? `<div class="note">note：${esc(b.note)}</div>` : ""}
+      ${prods ? `<div class="prods">${prods}</div>` : ""}
+      <div style="margin-top:10px">${src}</div>
+    </div>`;
+}
+
+function render(result) {
+  const cites = result.citations || [];
+  const calls = result.tool_calls || [];
+  const trace = calls.length
+    ? `<div class="panel"><h2>查库动作</h2><div class="trace">${calls.map(
+        (c) => `<code>${esc(c.name)}(${esc(JSON.stringify(c.arguments))})</code>`
+      ).join("")}</div></div>`
+    : "";
+  const cards = cites.length
+    ? `<div class="panel"><h2>命中记录 · ${cites.length}</h2><div class="cards">${cites.map(citationCard).join("")}</div></div>`
+    : "";
+  $("#output").innerHTML = `
+    <div class="panel"><h2>结论</h2><div class="answer">${md(result.answer)}</div></div>
+    ${trace}
+    ${cards}`;
+}
+
+async function ask() {
+  const question = $("#q").value.trim();
+  if (!question) return;
+  $("#ask").disabled = true;
+  $("#output").innerHTML = `<div class="panel loading"><div class="spinner"></div>正在查库并请 DeepSeek 作答…</div>`;
+  try {
+    const r = await fetch("/api/ask", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question }),
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || ("HTTP " + r.status));
+    render(data);
+  } catch (e) {
+    $("#output").innerHTML = `<div class="panel"><h2>出错了</h2><div class="error">${esc(e.message)}</div></div>`;
+  } finally {
+    $("#ask").disabled = false;
+  }
+}
+
+$("#ask").addEventListener("click", ask);
+$("#q").addEventListener("keydown", (e) => { if (e.key === "Enter") ask(); });
+renderChips();
+loadStats();
+</script>
+</body>
+</html>
