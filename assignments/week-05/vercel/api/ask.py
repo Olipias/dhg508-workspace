@@ -50,9 +50,11 @@ class handler(BaseHTTPRequestHandler):
         if not q and not img:
             _json(self, 400, {"error": "请输入问题，或上传一张产品图片"})
             return
-        print(f"[ask] ip={_ip(self)} img={bool(img)} q={q[:300]!r}", flush=True)
+        raw_hist = payload.get("history")
+        hist = [m for m in raw_hist if isinstance(m, dict)] if isinstance(raw_hist, list) else []
+        print(f"[ask] ip={_ip(self)} img={bool(img)} turns={len(hist)} q={q[:300]!r}", flush=True)
         try:
-            _json(self, 200, answer(q, img))
+            _json(self, 200, answer(q, img, hist))
         except RuntimeError as e:
             _json(self, 502, {"error": str(e)})
         except Exception as e:  # noqa: BLE001

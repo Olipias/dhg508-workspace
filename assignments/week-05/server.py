@@ -345,6 +345,8 @@ def build_system_prompt() -> str:
         "最后单独一行「来源：<来源名称> <链接>」。证据强弱用大白话说（很强／一般／很虚／根本没查到）。\n\n"
         "完全查不到 → 回「未见收录在双休公司产品中」，并且**要阴阳怪气**地损一句"
         "（例如『这牌子？库里查无此物，怕不是个三无小厂』『也有可能是你记错了』），但别编。\n\n"
+        "**连续对话**：当上下文里有上一轮问题时，可以顺带对上一个话题阴阳一句 callback"
+        "（例如上一轮问零食、这一轮又问饮料，就酸一句『吃这么多，家里几个矿啊』）；偶尔为之，别每轮都 callback。\n\n"
         "如果用户给了图片：先识别图中的产品名与公司/品牌名再查；读不出品牌就用产品品类查，仍无则直说。\n\n"
         "以下是必须遵守的原则：\n\n" + principles
     )
@@ -386,7 +388,7 @@ def call_deepseek(messages: list[dict], tools: list[dict]) -> dict:
         raise RuntimeError(f"无法连接 DeepSeek API：{e.reason}") from e
 
 
-def answer(question: str, image: str | None = None) -> dict:
+def answer(question: str, image: str | None = None, history: list | None = None) -> dict:
     session = AskSession()
     try:
         if image:
@@ -400,10 +402,12 @@ def answer(question: str, image: str | None = None) -> dict:
             ]
         else:
             user_content = question
-        messages = [
-            {"role": "system", "content": build_system_prompt()},
-            {"role": "user", "content": user_content},
-        ]
+        messages: list = [{"role": "system", "content": build_system_prompt()}]
+        for m in (history or [])[-10:]:
+            if (isinstance(m, dict) and m.get("role") in ("user", "assistant")
+                    and isinstance(m.get("content"), str) and m["content"].strip()):
+                messages.append({"role": m["role"], "content": m["content"][:2000]})
+        messages.append({"role": "user", "content": user_content})
         for _ in range(MAX_TOOL_ROUNDS):
             resp = call_deepseek(messages, TOOLS)
             choice = resp["choices"][0]
@@ -542,12 +546,14 @@ class Handler(BaseHTTPRequestHandler):
         if not question and not image:
             self._json(400, {"error": "请输入问题，或上传一张产品图片"})
             return
-        print(f"[ask] ip={self._client_ip()} img={bool(image)} q={question[:300]!r}", flush=True)
+        raw_hist = payload.get("history")
+        hist = [m for m in raw_hist if isinstance(m, dict)] if isinstance(raw_hist, list) else []
+        print(f"[ask] ip={self._client_ip()} img={bool(image)} turns={len(hist)} q={question[:300]!r}", flush=True)
         if not DB_PATH.exists():
             self._json(500, {"error": f"数据库不存在：{DB_PATH}。请先跑 week-04/code/build_db.py"})
             return
         try:
-            self._json(200, answer(question, image))
+            self._json(200, answer(question, image, hist))
         except RuntimeError as e:
             self._json(502, {"error": str(e)})
         except Exception as e:  # noqa: BLE001

@@ -89,6 +89,22 @@
   .footer { color: var(--muted); font-size: 12.5px; margin-top: 34px; border-top: 1px solid var(--line); padding-top: 16px; }
   .hidden { display: none; }
 
+  /* 快查 / 连续对话 */
+  .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+  .tab {
+    background: var(--panel2); border: 1px solid var(--line); color: var(--muted);
+    border-radius: 999px; padding: 7px 15px; font-size: 14px; cursor: pointer;
+  }
+  .tab.active { color: #05230f; background: linear-gradient(180deg,#4ade80,#22c55e); border-color: transparent; font-weight: 700; }
+  .chatlog { display: flex; flex-direction: column; gap: 12px; margin-bottom: 14px; }
+  .chat-empty { color: var(--muted); font-size: 13.5px; background: var(--panel); border: 1px dashed var(--line); border-radius: 12px; padding: 14px; }
+  .msg { max-width: 88%; padding: 11px 14px; border-radius: 14px; font-size: 14.5px; line-height: 1.6; }
+  .msg.user { align-self: flex-end; background: rgba(74,222,128,.14); border: 1px solid rgba(74,222,128,.35); color: var(--text); }
+  .msg.bot { align-self: flex-start; background: var(--panel); border: 1px solid var(--line); }
+  .msg.bot strong { color: #fff; }
+  .msg.err { color: var(--danger); }
+  .msg code { background: #0c1014; border: 1px solid var(--line); border-radius: 6px; padding: 1px 5px; font-size: 12.5px; }
+
   /* 手机端适配 */
   @media (max-width: 560px) {
     .wrap { padding: 26px 14px 60px; }
@@ -105,6 +121,8 @@
     .filebtn { padding: 8px 12px; font-size: 13px; }
     .preview img { max-height: 88px; max-width: 130px; }
     .chip { font-size: 12.5px; padding: 6px 11px; }
+    .msg { max-width: 94%; }
+    .tab { padding: 6px 12px; font-size: 13.5px; }
   }
 </style>
 </head>
@@ -117,24 +135,44 @@
     <div class="stats" id="stats"><span class="stat">加载中…</span></div>
   </header>
 
-  <div class="searchbar">
-    <input id="q" type="text" placeholder="例如：安克是双休吗？ / 咖啡有哪些双休公司？" autocomplete="off" />
-    <button class="ask" id="ask">查一查</button>
-  </div>
-  <div class="tools">
-    <label class="filebtn" for="shot">📷 拍照 / 上传产品</label>
-    <input id="shot" type="file" accept="image/*" capture="environment" hidden />
-    <span id="filehint" class="filehint">或直接输入品牌/产品名。拍包装图可自动识别产品与公司。</span>
-    <button class="clear hidden" id="clearimg">清除图片</button>
-  </div>
-  <div id="preview" class="preview hidden">
-    <img id="previewimg" alt="预览" />
-    <div id="detected" class="detected"></div>
+  <div class="tabs">
+    <button class="tab active" data-mode="oneshot">🔍 快查</button>
+    <button class="tab" data-mode="chat">💬 连续对话</button>
   </div>
 
-  <div class="chips" id="chips"></div>
+  <div id="mode-oneshot">
+    <div class="searchbar">
+      <input id="q" type="text" placeholder="例如：安克是双休吗？ / 咖啡有哪些双休公司？" autocomplete="off" />
+      <button class="ask" id="ask">查一查</button>
+    </div>
+    <div class="tools">
+      <label class="filebtn" for="shot">📷 拍照 / 上传产品</label>
+      <input id="shot" type="file" accept="image/*" capture="environment" hidden />
+      <span id="filehint" class="filehint">或直接输入品牌/产品名。拍包装图可自动识别产品与公司。</span>
+      <button class="clear hidden" id="clearimg">清除图片</button>
+    </div>
+    <div id="preview" class="preview hidden">
+      <img id="previewimg" alt="预览" />
+      <div id="detected" class="detected"></div>
+    </div>
 
-  <section id="output"></section>
+    <div class="chips" id="chips"></div>
+
+    <section id="output"></section>
+  </div>
+
+  <div id="mode-chat" class="hidden">
+    <div id="chatlog" class="chatlog">
+      <div class="chat-empty">连着问，它会记得你上一句——比如先问「薯片买哪家」，再问「饮料买哪家」，可能顺手阴阳你一句。</div>
+    </div>
+    <div class="searchbar">
+      <input id="cq" type="text" placeholder="接着问，例如：那饮料买哪家？" autocomplete="off" />
+      <button class="ask" id="cask">发送</button>
+    </div>
+    <div class="tools">
+      <button class="clear" id="clearchat">清空对话</button>
+    </div>
+  </div>
 
   <div class="footer">
     <div class="legend">
@@ -341,6 +379,69 @@ async function ask() {
 
 $("#ask").addEventListener("click", ask);
 $("#q").addEventListener("keydown", (e) => { if (e.key === "Enter") ask(); });
+
+// ---- 连续对话 ----
+document.querySelectorAll(".tab").forEach((t) =>
+  t.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach((x) => x.classList.toggle("active", x === t));
+    const mode = t.dataset.mode;
+    $("#mode-oneshot").classList.toggle("hidden", mode !== "oneshot");
+    $("#mode-chat").classList.toggle("hidden", mode !== "chat");
+    if (mode === "chat") $("#cq").focus();
+  })
+);
+
+let chatHistory = [];
+
+function appendChat(role, text, cls = "") {
+  const el = document.createElement("div");
+  el.className = `msg ${role === "user" ? "user" : "bot"} ${cls}`;
+  el.innerHTML = role === "user" ? esc(text) : md(text);
+  $("#chatlog").appendChild(el);
+  $("#chatlog").scrollTop = $("#chatlog").scrollHeight;
+  return el;
+}
+
+async function chatAsk() {
+  const q = $("#cq").value.trim();
+  if (!q) return;
+  if (IS_FILE) {
+    appendChat("assistant", "本地直接打开 .html 无法访问接口，请用部署地址打开。", "err");
+    return;
+  }
+  appendChat("user", q);
+  $("#cq").value = "";
+  $("#cask").disabled = true;
+  const tmp = appendChat("assistant", "…");
+  try {
+    const r = await fetch("/api/ask", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question: q, history: chatHistory }),
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || ("HTTP " + r.status));
+    tmp.innerHTML = md(data.answer || "");
+    $("#chatlog").scrollTop = $("#chatlog").scrollHeight;
+    chatHistory.push({ role: "user", content: q });
+    chatHistory.push({ role: "assistant", content: data.answer || "" });
+    if (chatHistory.length > 12) chatHistory = chatHistory.slice(-12);
+  } catch (e) {
+    tmp.remove();
+    appendChat("assistant", "出错了：" + e.message, "err");
+  } finally {
+    $("#cask").disabled = false;
+    $("#cq").focus();
+  }
+}
+
+$("#cask").addEventListener("click", chatAsk);
+$("#cq").addEventListener("keydown", (e) => { if (e.key === "Enter") chatAsk(); });
+$("#clearchat").addEventListener("click", () => {
+  chatHistory = [];
+  $("#chatlog").innerHTML = `<div class="chat-empty">已清空。接着问吧。</div>`;
+});
+
 renderChips();
 loadStats();
 </script>
