@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import base64
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -44,6 +45,13 @@ def main() -> int:
 
     (VERCEL / "index.html").write_text(
         (W5 / "index.html").read_text(encoding="utf-8"), encoding="utf-8")
+
+    # PWA：manifest、service worker、图标
+    for f in ("manifest.webmanifest", "sw.js"):
+        shutil.copy(W5 / f, VERCEL / f)
+    (VERCEL / "icons").mkdir(exist_ok=True)
+    for f in (W5 / "icons").glob("*.png"):
+        shutil.copy(f, VERCEL / "icons" / f.name)
 
     kb = len(out) / 1024
     print(f"wrote vercel/api/_db.py ({kb:.0f} KB) and vercel/index.html")
