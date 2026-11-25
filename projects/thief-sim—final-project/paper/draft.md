@@ -58,6 +58,8 @@ Playtesting caught four defects unit tests missed: guards frozen while the playe
 
 **What changed.** I cut the artifact-spirit dialogues (`v0.20.0`), dropped the closing countdown (`v0.21.4`), limited fog to the minimap (`v0.26.12`), and replaced the three-chain requirement with one verified target.
 
+**Where the build falls short.** This release is a working prototype, not the game I set out to make. Most rooms still carry placeholder pixel art, the dialogue reads as a draft script rather than finished writing, and audio stops at procedurally generated cues with no music or mixing pass. Development halted when the AI tooling budget ran out, which froze the build at this state. The systems, the evidence boundaries, and the tests hold up under review; the presentation does not yet.
+
 **Limits and AI assistance.** Automated suites and the Linux boot pass on `v0.26.16`; Windows and macOS host testing and a player study remain open. I designed the mechanics, set the historical boundaries, wrote the paper, and verified every citation myself. AI tools assisted with implementation: OpenCode, Codex, and Claude Code for GDScript debugging and test scaffolding, Tencent Hunyuan3D for sprite rendering, and `stop-slop` with `Humanizer-zh` for English style.
 
 [^met]: Metropolitan Museum of Art, “Heart Scarab,” object 10.130.1650, “Artwork Details,” accessed November 25, 2026, https://www.metmuseum.org/art/collection/search/548226.

@@ -4,7 +4,7 @@
 
 ## 文件清单
 
-- `design-paper.pdf`（及同步副本 `design-paper-draft.pdf`）：XeLaTeX + Biber 编译生成的 4 页美化版最终 PDF（正文约 1,250 英文词，芝加哥注释—书目制 `biblatex-chicago`）。
+- `design-paper.pdf`（及同步副本 `design-paper-draft.pdf`）：XeLaTeX + Biber 编译生成的 4 页美化版最终 PDF（正文约 1,300 英文词，芝加哥注释—书目制 `biblatex-chicago`）。
 - `overleaf-final.zip`（及同步副本 `overleaf-draft.zip`）：可直接上传 Overleaf 编译的完整源码压缩包（含 `main.tex`、`references.bib`、`evidence.csv`、`make_evidence_table.py`、`evidence-table.tex`、`schematic.png`）。
 - `main.tex`：LaTeX 主文档（含全部六个章节、架构图 Figure 1、自动生成的证据表 Table 1、芝加哥脚注与参考文献列表）。
 - `draft.md`：与 `main.tex` 完全同步的英文 Markdown 源稿（由 `build_draft.py` 自动转换为 `main.tex`）。

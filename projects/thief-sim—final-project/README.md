@@ -11,7 +11,7 @@ DHG508 Critical Digital History · 2026-11-25 · Release `v0.26.16`
 | 想做什么 | 去哪里 |
 | --- | --- |
 | 直接玩 | [`releases/v0.26.16/`](releases/v0.26.16/) — 解压即运行，无需安装 Godot |
-| 读设计论文 | [`paper/design-paper.pdf`](paper/design-paper.pdf) — 4 页，约 1,250 词 |
+| 读设计论文 | [`paper/design-paper.pdf`](paper/design-paper.pdf) — 4 页，约 1,300 词 |
 | 在 Overleaf 编译论文 | 上传 [`paper/overleaf-final.zip`](paper/overleaf-final.zip)，编译器选 **XeLaTeX** |
 | 看证据表原始数据 | [`paper/evidence.csv`](paper/evidence.csv) → `make_evidence_table.py` → `evidence-table.tex` |
 | 跑测试 | `tools/verify.sh --visual`（Godot 4.7） |
