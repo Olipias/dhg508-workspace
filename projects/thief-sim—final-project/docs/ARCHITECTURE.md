@@ -1,0 +1,318 @@
+# 架构地图（ARCHITECTURE）
+
+> 目的：让 agent 快速建立正确的心智模型，并按配方（Recipes）安全扩展。
+> **维护要求**：改动架构（新增模块、数据格式、信号契约、存档字段）时同步更新本文件。
+
+## 0. 已确认的目标架构（待实现，2026-11-16）
+
+以[当前确认方案](CONFIRMED_DESIGN.md)为实施约束；下方§1–§9为旧实现快照/配方，其中Hub栏目、安全屋纯UI、背包和器灵路径不能作为新设计继续扩展。
+
+- Main继续统一编排。世界层加载独立Safehouse/Museum；UI层承载标题、设备、对话。安全屋世界节点不能挂CanvasLayer。**R-01已落地**：`src/world/safehouse.gd/tscn`（可走动 Node2D 室内场景）+ `computer_screen` / `box_screen` 设备覆盖层；正式流程（标题继续/教学撤离/失败结算/结局返回）全部经 `Main.show_safehouse()`，旧 Hub 栏目页不再被正式流程进入（hub.tscn 仅保留为推理板内容测试的独立宿主）。
+- 新游戏：Title→可手动推进的签约演出→Tutorial；撤离→Safehouse。读档/失败返回/结局回溯同样进入合法独立场景，不走旧Hub。
+- Safehouse实体电脑发出使用请求，由Main打开电脑UI；手机App准备行动仅记录pending mission，门交互才调用场景切换。设备关闭恢复房内位置与输入，不能误触出发。**R-01现状**：电脑为骨架页（完整调查界面待R-03/R-04），箱内战利品暂可直售（旧销赃页过渡替代，R-05接手机预约交货后移除），房门按 `completed_museum` 决定下一关（手机目标选择与准备门禁在R-04）。
+- 文物状态区分随身、箱内、已交付/已售，物品实例保持唯一所有者。主要文物的“已带回/可催交”依据任务状态，不可简单复用旧“背包有目标才完成”而使存箱阻断剧情；馆内携目标才能撤离的现有约束继续保留。
+- 普通预约状态：未预约→已预约/买家等待→取货→确认交付或取消。预约不支付，交货时校验所有权并一次性移除/付款；重开/重复确认不能重复结算。主线物品永不进入此交易路径。门对出发/交货提供明确选择。
+- 规划使用统一状态转换：玩家/自动移动/世界交互/守卫感知/监控/噪音寿命/行动时钟同进同出暂停。退出保留守卫原状态，不调用重置巡逻来“恢复”。原“有覆盖层⇔暂停”不能覆盖规划、分镜、场景过渡等合法暂停原因，应改为按暂停原因集合判断，新增真实输入与monkey覆盖。
+- 新箱子/预约/待出发/剧情交付字段只增不删，老字段默认值与迁移须在实现时设计并补测试；本次没有更改存档代码或既有字段语义。
+
+### 0.1 确定性模拟与结局收束（新增目标，待实现）
+
+[确定性灰盒](DETERMINISTIC_PREVIEW.md)先于完整场景：模拟内核是固定tick纯状态转换，巡逻/调查/监控/动作/噪音/碰撞共享代码；渲染读状态，不决定模拟。预演跑快照副本，执行消费同快照，记录状态/事件/触发tick及对应帧；失败恢复全部状态并保留原路线，不只回退玩家位置。全部比较不依赖渲染帧率或执行时随机偏移。
+
+2026-11-19用户裁定取代强制片尾声明：完整声明和来源集中标题页，结束/跳过演出正常返回标题或检查点；正文不逐条显示编辑标签。后续用作者元数据、来源与统一标题声明维持内容边界。内容文案映射与审校规则见[CONTENT_REVIEW](CONTENT_REVIEW.md)；本次仅记录目标架构，未新增运行时资源或脚本。
+
+## 1. 总览
+
+```
+main.tscn (Main, src/main.gd) —— 唯一场景编排者
+├── Screen (Node2D)          世界层：Hub / Museum 场景挂在这里
+│                            ⚠ 必须挂在默认画布，不能塞进 CanvasLayer（相机失效，见 D-003）
+├── UILayer (CanvasLayer)    全屏界面：标题 TitleScreen、据点 Hub、结算 ResultScreen
+├── HUD (CanvasLayer)        任务/金币/背包/提示/警戒/小地图 + 右下角任务终端按钮
+├── Backpack (CanvasLayer)   格子背包整理界面
+├── Phone (CanvasLayer)      任务终端（手机）：任务发布 + 档案（端详）
+├── Statements (CanvasLayer) 声明与说明（标题页入口；非游戏内覆盖层，不暂停）
+├── RelicCloseup (CanvasLayer) 互动特写层（2.5D，按 E 触碰重点文物；打开即暂停）
+└── Dialogue (CanvasLayer)   打字机对话框
+
+Autoload
+├── Game  (src/autoload/game_state.gd)   全局状态：金钱/背包/升级/关卡注册表/存档
+└── Audio (src/autoload/audio.gd)        音效池
+```
+
+场景流：`Title`（标题/存档）→ `Hub`（据点商店 + 选关）—开始任务→ `Museum`（潜行关卡）—撤离/被捕→ `Result`（结算）→ `Hub`。
+界面之间**不互相引用**：一切通过 `main.gd` 连接信号、切换场景、控制暂停（`get_tree().paused`）。
+
+## 2. 模块职责表
+
+| 文件 | 职责 | 关键点 |
+| --- | --- | --- |
+| `src/main.gd` | 场景流程编排、暂停控制、任务简报 | 手机/背包开关带 0.2s 冷却（`toggle_allowed()`），防关闭后同帧被重开； 世界加到 `Screen`；HUD/对话/背包的信号在这里接线；`start_mission(level_id)` 设定关卡并显示对应简报 |
+| `src/actors/player.gd` | 玩家移动（走/跑/蹲）、拾取、道具、噪音、脚步、自动执行 | 信号 `used_item` / `made_noise`；分组 `player`；`controls_enabled` 冻结操控；`crouching` 蹲下（移速 ×0.65、无跑步噪音）；`auto_moving` 自动沿路径点移动；场景内 `Camera2D`（zoom 2×，即一屏 20×11 格）+ 玩家微光 `Aura` |
+| `src/actors/police.gd` | 警察 AI：巡逻 → 调查 → 追击 → 逮捕 | 状态机 `State{PATROL,INVESTIGATE,CHASE}`；`in_cone()` 纯函数（可单测）；视野射线仅被墙阻挡（mask=1）；**视物与逮捕要求与玩家同房间**（`can_see_player()` + `museum.room_index_at`，门洞可走但不隔房索敌）；`blind()` 烟雾致盲（同时熄灭手电）；`alert_level()` 0/1/2；头顶警觉进度条（`_spot_timer / _spot_delay()`）；`investigate(pos, seconds, stop_distance)` 可让循声搜索停在远处；`set_ai_enabled()` 供演出/截图暂停感知；`spotted_player(reason)` 信号供 `Museum` 进入失败回放 |
+| `src/world/museum.gd` | 关卡构建与全部关卡规则 | `level_id` → 地图/目标按关卡解析（`target_item_id()`）；读 JSON 建碰撞/灯光/角色；房间相机；小地图数据；烟雾弹；噪音按房间分流；出口锁；**路线预演系统**（`planning_mode`/`executing_plan`/`failure_replay`；规划节点、自动执行、失败红色高亮回放、回退重规划）；**大英博物馆六展厅主题**（`BM_THEMES` + `_room_of_tile` + `_draw_bm_tile()`）+ **纯视觉装饰层**（`BM_DECOR` + `_build_bm_decor()`，不新增碰撞）+ **装饰动效与 Room 3 光影**（`_animate_bm_decor()`、`BMDust`/`BMZunReflection`/`BMGlassGlint`）；**视觉/碰撞一致性**（`is_cell_blocked()` + `BM_SOLID_DECOR`，T/a/p 展台与大件装饰有实体） |
+| `src/world/artifact.gd` | 场景中的可拾取文物 | 贴图约定 `artifact_<id>.png`（16×16 图标）；若存在 `relic_<id>_strip.png` 则显示 3D 渲染转台动画（12 帧 × 24×28，常量在脚本内）；拾取成功/失败信号 |
+| `src/world/smoke_puff.gd` | 烟雾视觉（纯表现） | 不承载规则 |
+| `src/ui/hub.gd` | 据点：商店购买 + 开始任务 | `ROWS` 决定货架顺序，须与 `Game.UPGRADES` 一致（有测试） |
+| `src/ui/hud.gd` | HUD 全部显示 | 监听 `Game` 三信号；`bind_level()` 绑小地图；`toast()` 提示 |
+| `src/ui/minimap.gd` | 房间小地图 | 从 `museum.rooms` 坐标自动推列/行；标目标/出口/当前房间/玩家点 |
+| `src/ui/backpack_screen.gd` | 背包整理（键盘 + 鼠标拖拽） | 拖出方框 → `drop_requested` 交给 main 丢到场景；打开时由 main 暂停 |
+| `src/ui/bag_grid.gd` | 背包格子绘制 | 只负责画，不存数据；`ram_zun` 使用 `bm_zun_32.png` 图标 |
+| `src/ui/dialogue_box.gd` | 打字机对话 | `advance()`；暂停由调用方控制 |
+| `src/ui/result_screen.gd` | 结算界面 | 展示 `Game.finish_run()` 返回的 summary |
+| `src/ui/title_screen.gd` | 标题界面（立绘 + UI） | 立绘优先 `assets/art/title_key_art.jpg` / `.png`（作者图），缺省 `title_key_art_placeholder.png`；渐隐遮罩 `shade_*.png`；继续/新游戏（二次确认）/退出 |；场景化菜单：开始/继续在立绘手边、文物档案收集册在博物馆入口（`collection_requested` → `CollectionScreen.open()`）
+| `src/ui/hub.gd` | 据点：关卡选择 + 商店 | 任务页由 `Game.LEVELS` 动态生成卡片（`RelicView` 展示目标文物）；商店页保留货架；`ROWS` 须与 `UPGRADES` 一致（有测试） |
+| `src/ui/mission_phone.gd` | 任务终端（手机） | 右下角按钮或 P 打开；「任务」页读 `Game.level_info()/mission_target_id` + `Game.ARCHIVE` 文物档案卡；「档案」页端详随身文物（热点 + 展签卡）；打开时由 main 暂停 |
+| `src/ui/relic_view.gd` | 文物展示控件 | 优先 `relic_<id>_ui_strip.png`（12 帧 × 48×56，常量在此），否则静态图标放大；手机/关卡卡片共用 |
+| `src/data/lore.gd` | 文物志数据（静态类 `Lore`） | 剧本（speech/card/choices/label/goto）、展签卡（世界观口吻的史实）、端详热点（归一化坐标）；文本与代码分离，新增文物志只改这里 + `docs/SOURCES.md` |
+| `src/data/statements.gd` | 正式声明数据（静态类 `Statements`） | 项目性质、史实/虚构分界、真实文物与来源、3D 模型说明、字体许可、立场与致谢；游戏内**不放**学术引用，全部集中于此 |
+| `src/ui/statements_screen.gd` | 声明与说明页（标题入口） | 纸卡 + 滚动列表；非游戏内覆盖层（不暂停），ESC / 按钮关闭 |
+| `src/ui/dialogue_tree.gd` | 器灵对谈（选项 + 展签卡） | 播放 `Lore.stages()`；结束时回调推进 `Game.lore_stage`；史实卡与台词视觉分离 |
+| `src/ui/collection_screen.gd` | 文物档案收集册（标题页） | 列出真实文物；已归档显示特写/档案/器灵进度，未归档「？？？」+获取提示；ESC 关闭；不暂停 |
+| `src/data/collection.gd` | 收集册条目数据 | 复用 `Game.ARCHIVE` + `Lore.closeup_path`；锁定提示与字段名 |
+| `src/ui/relic_closeup.gd` | 互动特写层（2.5D） | 检测 `relic_<id>_closeup.png`；黑场淡入 + 暖光 + 呼吸推近；E 拾取 / Esc 离开；打开 ⇔ 暂停 |
+| `src/ui/inspect_page.gd` | 端详页（手机档案页内） | 特写 + 热点标记（发现状态存 `Game.lore_found`）+ 展签卡列表（按进度解锁，点击交给 main 用 DialogueTree 展示） |
+| `src/autoload/game_state.gd` | 全部可持久化状态与规则 | 内容表 `CATALOG/SHAPES/UPGRADES/BAG_SIZES` 目前在这里（技术债，见 §8）；**关卡注册表 `LEVELS`**（id/名称/地图/目标/报酬）+ `set_level()` + `mission_target_id`；**`ARCHIVE` 文物档案字段**（与 SOURCES.md 对齐；游戏内只显示年代/原在地/现藏/流转/备注，来源与演绎说明集中在标题页） |
+| `src/autoload/audio.gd` | 音效播放 | `SFX` 键→路径；播放器池轮转；退出前 `shutdown()` |
+| `src/levels/*.json` | 关卡数据（**生成物**） | `museum_map.json`（城西博物馆）/ `british_museum.json`（大英博物馆·中国馆）；由 `tools/gen_museum_map.py` 生成；verify 校验同步 |
+| `tests/*` | 测试与截图 | 见 §7 |
+| `tools/*.py` | 资源生成脚本 | 生成物只能由它们更新；含 3D→2D 管线（`gen_relic_sprite.py`） |
+| `tools/gen_bm_art.py` | 大英博物馆资产包生成器 | 生成 `assets/sprites/bm/`（六展厅瓦片/道具/UI/双羊尊 32×32/玻璃展柜）与 `assets/sprites/bm/decor/`（13 类纯视觉装饰）；改样式改脚本后重跑 |
+| `tools/blender/*.py` | Blender 建模与渲染脚本 | headless 可重跑（`~/bin/blender`）；产出 `assets/models/*`（`.gdignore`，运行时不加载）与转台渲染图 |
+| `tools/verify.sh` | 一键验证 | 收尾必跑 |
+| `tools/blender/build_ram_zun.py` | 双羊尊 3D 模型生成脚本（程序化建模，回退用） | 生成物在 `assets/models/`（带 `.gdignore`，不参与 Godot 导入）；渲染默认用腾讯混元（Hunyuan3D）生成的 3D 资产（本地、不入库） |
+| `tools/check_level.py` / `check_docs.py` | 生成物同步/文档自检 | 由 verify 调用 |
+
+## 3. 关键数据
+
+### 3.1 全局状态（`Game`）
+
+- 运行局内：`bag_items: Array[{id,x,y,rot}]`、`mission_complete`
+- 长期成长：`money`、`backpack_level`、`has_sneakers`、`smoke_count`、`loot_stash`（据点仓库：待售战利品 id 列表）、`archive_seen`（文物档案收集：接触过的文物 id）
+- 信号：`backpack_changed` / `money_changed` / `items_changed`（UI 只监听，不轮询）
+- Σ 存档：`user://save.json`（测试隔离到 `/tmp`）。**原子写**：先写 `.tmp` 再改名覆盖；`has_save()` 会校验 JSON——损坏/半写档不会被当成"可继续"，读档失败安全回退默认值。**被逮捕/未带出目标时立刻清空赃物并落盘**（没收必须生效，不能靠退出重开"复活"）。
+
+```json
+{ "money": 0, "backpack_level": 0, "has_sneakers": false,
+  "smoke_count": 0, "bag_items": [{"id": "mask", "x": 0, "y": 0, "rot": 0}] }
+```
+
+- **`mission_complete` 规则**：永远由背包内容实时推导（`_recompute_mission()`），目标丢出→false→出口重新上锁；放回→true。不要新增"曾经拿到过"的状态位。
+
+### 3.2 背包几何
+
+- `SHAPES`：形制 = 格子偏移数组（如面具 2 格横排、玉璧 1×3），运行时旋转 90° 连续步进。
+- 合法性：`bag_can_place(id, rot, x, y)`；自动摆放：`bag_auto_fit(id)`（先 0° 后 90°）。
+- `BAG_SIZES`：等级 0..5 的格子数（2×2 → 5×4）。
+- 相关测试：`tests/test_logic.gd::_test_bag_geometry`。
+
+### 3.3 关卡数据（`src/levels/*.json`，生成物）
+
+多关卡：`museum_map.json`（城西博物馆）与 `british_museum.json`（大英博物馆·中国馆），由 `tools/gen_museum_map.py` 的 `LEVELS` 配置生成；关卡注册表在 `Game.LEVELS`（id → 名称/地图/目标文物/报酬）。
+
+```json
+{ "tile_size": 16,
+  "rooms":   [[x,y,w,h], ...],   // 房间矩形（格坐标），供相机/小地图/感知分流
+  "floors":  [[x,y,w,h], ...],   // 地板矩形（含走廊），仅绘制用
+  "tiles":   ["...", ...],       // 每行一个字符串，字符=瓦片
+  "patrols": {"1": [[x,y], ...]} // 警察出生点字符 → 巡逻路径（格坐标）
+}
+```
+
+瓦片图例（改地图看这里；`.~TapXP123456789` 为可行走）：
+
+| 字符 | 含义 | 字符 | 含义 |
+| --- | --- | --- | --- |
+| `.` | 地板 | `#` | 墙（实心） |
+| `~` | 地毯 | `W` `L` | 挂画/壁灯墙（实心） |
+| `o` | 柱子（实心） | `d` | 展柜（实心） |
+| `r` | 围栏绳（实心） | `s` `v` | 雕像/盆栽（实心） |
+| `p` | 展台（实心） | `T` | 任务目标（生成在展台上） |
+| `a` | 额外战利品（按 `ARTIFACT_POOL` 轮转） | `P` | 玩家出生点 |
+| `X` | 出口 | `1-9` | 警察出生点（键=巡逻路线 ID） |
+
+### 3.4 房间 / 相机 / 小地图
+
+- `museum.rooms` 是房间矩形的权威数据；`room_index_at(pos)` 全局使用。
+- 单屏一房间（20×12，相机 zoom 2×）：跨进新房间时相机 `limit_*` 重设（`_apply_camera_limits`），玩家永远只见一屏。
+- 夜间氛围（纯表现，不影响判定）：全局 `CanvasModulate` 夜色 + 展品/壁灯暖色 `PointLight2D` + 警察手电筒光锥（`Flashlight`，随朝向旋转、致盲时熄灭）+ 玩家微光；文物光晕挂在文物节点上，被拿走即熄灭。
+- 感知分流：噪音（`made_noise`）与幽灵哀嚎只惊动**同房间**且距离内的警察。
+- 小地图：从房间坐标去重出列/行自动排布，记录 `visited_rooms`、`target_room`、`exit_room`。
+- 尺寸约定：瓦片/灯光 16×16 起；角色 16×24（帧表 2 列 × 3 行）；文物图标 16×16（背包格 24px 内绘制）；**任务目标可用 3D 渲染的转台条** `relic_<id>_strip.png`（12 帧 × 24×28，常量在 `Artifact`）。改尺寸要同时改绘制与生成脚本。
+
+## 4. 关键数据流
+
+- **拾取**：`Player` 按 E → `Artifact.try_pickup()` → `Game.try_pickup()`（自动找位）→ 成功 `picked` / 失败 `pickup_blocked` → `museum` 用 `toast` 反馈；`Game` 发 `backpack_changed` → HUD 刷新。
+- **任务目标**：拾取 → `mission_complete=true` 且触发幽灵事件；丢到场景 → 实时重算为 false → 出口拒绝开启（`_on_exit_body_entered` 检查 `Game.mission_complete`）。
+- **互动特写**：`Player.inspect_requested` → `Museum.closeup_requested` → `Main.open_relic_closeup()`（暂停）→ 拾取时 `Museum.pickup_artifact()`。
+- **战利品**：撤离结算 → 目标上交并发放组织报酬；其余文物进入 `Game.loot_stash`（不自动出售）→ 据点「销赃」页逐件/全部卖出（`sell_stash_item` / `sell_all_stash`）。
+- **警察感知**：听到噪音 → `INVESTIGATE`（走去看）→ 视野锥内持续 0.5s（无墙遮挡；初始调查 ×1.5 加速）→ `CHASE` → 接触 <11px 逮捕；发现过程在头顶画黄色进度条；`blind()` 清空状态回巡逻；警戒等级 0/1/2 逐级上报 → HUD。
+- **幽灵事件**：拾取目标后延迟 `ghost_delay` 生成 `Ghost`；幽灵周期 `wailed(pos)` → 同房间 96px 内警察 `investigate(pos, …, 40px)`（停在远处搜索）；首次引警时 toast 说明「离开原地 / 按 E 安抚」；交谈后 `calm(8s)` 停止哀嚎；幽灵超时渐隐自毁。
+- **音频**：`Audio.play(name, dB, pitch)` 轮转 10 个播放器，避免互相切断；测试与退出前 `shutdown()`。
+
+## 5. 不变量（改代码前必读）
+
+1. 世界节点不进 CanvasLayer（否则相机静默失效——v0.6.0 修过，别再犯）。
+2. `mission_complete` 实时推导，不存历史标记。
+3. 生成物只能由 `tools/*.py` 重新生成；不手改 `assets/**` 与 `museum_map.json`。
+4. 感知几何保持纯函数（如 `Police.in_cone` 静态方法），保证可单测。
+5. 跨房间感知必须按 `room_index_at` 分流（噪音/哀嚎）。
+6. 测试存档隔离 `/tmp`；冒烟测试退出前 `Audio.shutdown()`。
+7. 存档只增字段且带默认值；UI 文案中文；640×360 布局假设。
+8. 背包放置判定单点实现（`Game.bag_can_place`）——UI 不得复制一套碰撞逻辑。
+9. **UI 覆盖层契约**（由 `tests/test_input_flow.tscn` 守卫）：有覆盖层打开 ⇔ `get_tree().paused`；B/P/ESC 关闭且**逐层返回**（卡片叠层先收卡片、再关手机）；覆盖层根节点必须 `process_mode=3`（ALWAYS，暂停中才能响应按键）；关闭后的短冷却（0.2s）防止同一按键"刚关又开"。新增/修改覆盖层必须在输入流自检补用例——**只调 `open()/close()` 的测试测不到按键路由 bug**。互动特写层（`RelicCloseup`）同属覆盖层：E 拾取 / Esc 离开。
+10. **路线预演状态契约**（由 `tests/test_monkey.gd` 与输入流守卫）：`planning_mode`/`failure_replay` 开启时玩家控制冻结且所有守卫 AI 冻结；`executing_plan` 期间 `Player.auto_moving` 为 true 直至玩家接管或抵达终点；规划节点数永远不超过 `MAX_PLAN_POINTS`；蹲下（`crouch` action）只在非规划/非执行/非回放态生效。
+
+## 6. 改造配方（Recipes）
+
+### 6.1 加一件文物（当前做法，数据表还在代码里）
+
+1. `src/autoload/game_state.gd` → `CATALOG` 加条目（`name` / `value` / `story` / `is_target`）。
+2. 同文件 `SHAPES` 加形制：格子数 1–6、归一化到 (0,0)、4 连通。
+3. `tools/gen_placeholder_sprites.py` 的 `ART` 字典加 id 条目（配色 + 16×16 像素图）→ `python3 tools/gen_placeholder_sprites.py` → 生成 `assets/sprites/artifact_<id>.png`。
+4. 若要进关卡战利品池：`src/world/museum.gd` 的 `ARTIFACT_POOL` 加 id（不能包含任务目标）。
+5. `tools/verify.sh`——`test_content.gd` 会校验以上全部链条。
+
+### 6.2 改地图 / 房间
+
+1. 改 `tools/gen_museum_map.py`：`CONTENT`（房间内容）与 `ROOM_COUNT` 等常量。
+2. `python3 tools/gen_museum_map.py` 重新生成 JSON（生成器自带连通性/巡逻合法性校验）。
+3. 更新测试中的期望：`tests/test_logic.gd::_test_map` 与 `tests/smoke_test.gd`（房间数、尺寸、目标/出口房间号、警察数）。
+4. `tools/verify.sh`。
+
+> 房间数/尺寸/位置是测试断言的一部分：地图改动天然是一次"跨文件"改动，照上表逐处更新。
+
+### 6.3 加音效
+
+`tools/gen_sfx.py` 的 `SOUNDS` 加生成函数 → 运行 → `src/autoload/audio.gd` 的 `SFX` 表登记（键 → 路径）→ verify（会反向检查 assets/sfx 里没有未登记的孤儿 wav）。
+
+### 6.4 加/改 UI 界面
+
+- 界面 = `CanvasLayer` + 独立 `.tscn`；打开/关闭与 `get_tree().paused` 的联动统一由 `main.gd` 控制（参考背包装备：`open_backpack()` / `_on_backpack_closed()`）。
+- 只读 `Game` 数据 + 监听信号；需要改状态时调用 `Game` 的方法（保持规则单点）。
+
+### 6.5 加存档字段
+
+1. `save_game()` / `load_game()` 同步加键，读取用默认值（旧档必须能加载）。
+2. 需要迁移/破坏性变更：写迁移函数 + 记入 `docs/DECISIONS.md`，并在 CHANGELOG「修改」中说明。
+
+### 6.6 加新关卡（v0.9.0 起已支持）
+
+多关卡已落地（D-012）：`Game.LEVELS` 注册表 + `museum.level_id` 按关卡解析。加一关的步骤：
+
+1. `tools/gen_museum_map.py`：`LEVELS` 加配置（名称/内容字典/输出文件名）并生成 JSON；生成器自带连通性/巡逻校验。
+2. `src/autoload/game_state.gd`：`LEVELS` 加条目（名称/地图/目标文物/报酬），目标文物在 `CATALOG` 标 `is_target` 且形制在 `SHAPES`。
+3. `src/main.gd`：`BRIEFINGS` 加简报（可选）；`src/ui/hub.tscn` + `hub.gd` 加选关按钮。
+4. 目标为**真实文物**时：先在 `docs/SOURCES.md` 登记（含来源与史实/演绎分界）。
+5. 测试：`test_logic._test_map` 的地图断言、`test_content` 会自动覆盖新关卡字段；`tools/verify.sh`。
+
+> 不要复制粘贴第二份 `museum.gd`；关卡差异都应数据化（地图 JSON + 注册表 + 简报）。
+
+### 6.7 3D 素材 → 游戏精灵（v0.10.0 起的管线）
+
+已有 3D 模型时，用离线渲染把它变成 2D 贴图（双羊尊默认用腾讯混元生成的 3D 资产，`MODEL=procedural` 回退程序化模型）：
+
+1. 写/改渲染脚本（参考 `tools/blender/render_relic_turntable.py`）：打开 blend、透明背景、固定机位、绕 Z 逐帧渲染到 `/tmp/opencode/<name>/`。
+   ```bash
+   blender --background --factory-startup --python tools/blender/render_relic_turntable.py
+   ```
+2. 改 `tools/gen_relic_sprite.py` 的输入目录/帧数/尺寸常量并运行，产出 `assets/sprites/relic_<id>_strip.png` 与 `artifact_<id>.png`。
+3. 游戏侧无需改代码：`artifact.gd` 检测到 `relic_<id>_strip.png` 即启用转台动画；尺寸常量（`Artifact.RELIC_*`）必须与生成脚本一致（`test_content` 校验）。
+4. `tools/verify.sh`（含资源导入步骤）。
+
+> 原则：3D 只在**构建期**使用，运行时是纯 2D（`.gdignore` 隔离 `assets/models/`，见 D-013）。
+
+### 6.7 3D 资产（Blender，与 2D 游戏并行）
+
+- 源脚本：`tools/blender/build_ram_zun.py`（程序化建模，headless 运行，Cycles CPU）。
+- 生成物：`assets/models/ram_zun.blend` + `ram_zun.glb`（+ `ram_zun_preview.png`）；目录带 `.gdignore`，Godot 不导入。
+- 重新生成：`FINAL=1 blender --background --factory-startup --python tools/blender/build_ram_zun.py`。
+- 依赖：本机 Blender 5.x（`~/bin/blender`）；改动形体后按「生成物禁止手改」原则重跑脚本并提交新生成物。
+- 边界：3D 资产不参与游戏运行与测试；若要接入引擎（如 3D 档案视图），先在 ROADMAP 建任务并确认技术方案。
+
+## 7. 测试与工具分工
+
+> 所有 godot 步骤都经过 `tools/verify.sh` 的**引擎报错门禁**：输出里出现 `ERROR/WARNING/泄漏/非法访问` 即失败（允许清单须注明理由）。因此"测试通过但日志有异常"不再被忽略。
+
+| 工具 | 位置 | 什么时候加用例 |
+| --- | --- | --- |
+| 纯逻辑单测 | `tests/test_logic.gd` | 背包/商店/存档/几何/地图结构等无场景逻辑 |
+| 内容一致性 | `tests/test_content.gd` | 新增文物/商店项/音效/关卡数据字段时自动覆盖，必要时扩展 |
+| 编译检查 | `tests/test_scripts.tscn` | 自动扫描 `src/`、`tests/` 全部 .gd |
+| 冒烟测试 | `tests/smoke_test.gd` | 场景行为：拾取/被捕/撤离/警报/幽灵/相机/背包界面 |
+| 输入流自检 | `tests/test_input_flow.tscn` | **UI/输入改动必加**：真实按键/鼠标事件驱动，覆盖层开关、互斥、逐层返回、暂停契约 |
+| 存档兼容 | `tests/test_save_compat.gd` | 新增存档字段/改加载逻辑时补老档与脏档用例 |
+| 进度自检 | `tests/test_progression.gd` | 结算/仓库/收集册/存档健壮性：没收落盘、防重复领奖、卖店边界、损坏档、新游戏清档 |
+| 场景实例化 | `tests/test_scenes.tscn` | 自动覆盖 `src/` 全部场景（新增场景无需改） |
+| 随机操作 | `tests/test_monkey.tscn` | 新增"任何时刻成立"的规则时加不变量；`MONKEY_STEPS` / `MONKEY_SEED` 可加深 |
+| 视觉回归 | `tests/visual_baseline/` + `tools/check_visual.py` | 画面改动后 `verify.sh --visual`；预期改动 `--update` 基线 |
+| 手动 QA | `docs/MANUAL_QA.md` | 每版收尾人工过一遍（观感/手感/音频/历史表述） |
+| 截图 | `tests/screenshot.tscn` | 画面改动后人工核验（输出 `/tmp/shot_*.png`） |
+| 一键验证 | `tools/verify.sh` | 收尾必跑；`--fast` 跳过冒烟+monkey；`--visual` 加视觉回归 |
+| 地图自检 | `tools/check_level.py` | 校验 `museum_map.json` 与生成器同步 + 生成器语法 |
+| 文档自检 | `tools/check_docs.py` | 站内链接可达性 + CHANGELOG 格式 |
+
+## 8. 已知技术债（对应 ROADMAP 任务）
+
+- **内容表在代码里**：`CATALOG` / `SHAPES` / `UPGRADES` 是 `game_state.gd` 的 const。计划迁到 `src/data/*.json` + 加载器 + schema 校验（迁移前注意并行窗口冲突）。
+- **单关卡硬编码**：`main.gd` / `museum.gd` 写死了"城西博物馆"。多关卡需要元数据与选关流程。
+- **占位美术**：全部由脚本生成，正式素材替换时保持同文件尺寸约定或同步改绘制代码。
+- **文档漂移风险**：代码可能领先文档；以测试与代码为准，`verify.sh` 与 ROADMAP 用于对齐。
+- 孤儿文件 `src/ui/main_menu.gd.uid`（脚本已删）：待确认后清理（ROADMAP 已知问题）。
+
+
+## 9. READMEnew 验收交互（2026-11-16）
+- `OpeningCG`（src/data/opening_cg.gd）：用户q6六格的多边形区域、标题、字幕与5秒时长；源图通过 tools/import_opening_cg.py 复制到可导出的 assets/art/opening/，不运行时加载docs资源。
+- `ContractIntro`：运行时裁切六格位图，字幕与Skip常驻；每格5秒自动推进，Space/E/左键推进后重新计时，忽略按键echo，同帧只推进一次。finished仅一次 → Main落saw_p00并start_mission("museum")；Main._busy阻止CG期间打开背包等界面。无新存档字段。
+- Hub 电脑来源页提供关键词检索、展厅/年代来源筛选、邮件回复与恶魔聊天；独立推理板页由 EvidenceBoard 管理卡片会话位置与拖线，Game.make_link 统一验证关系。
+- MissionPhone 新增日历与通讯录；接听/邮件进度使用 story_flags；行动中手机仍暂停。**R-01 起**安全屋是可走动的真实世界，手机/设备覆盖层打开时同样暂停世界（旧「据点手机不暂停」只适用于无活动世界的纯 UI 时代，已废除）。
+- Museum.closing_remaining 是局内状态，规划与失败回放冻结，回退恢复入口预算，重新出发重置。不得使用倒计时恢复中途存档。
+
+- 用户资源包：import_relic_pack.py校验并导入运行时2D素材；新目标ID为egypt_heart_scarab与akrotiri_askos。旧目标留在CATALOG作存档档案兼容，is_target=false；只迁移bm_selected_target，不将旧收藏或旧证据链算作新文物进度。
+
+
+## 规划冻结恢复入口（v0.23.3，2026-11-18）
+
+- Museum.is_world_frozen = planning_mode / failure_replay / _ended；所有状态转换调用_sync_world_freeze，禁止只恢复player.controls_enabled而遗漏守卫。
+- 世界子节点暂存process_mode后停处理，Museum自己继续读规划/回放输入；恢复时原样还原。CollisionObject2D暂停时保持在物理空间，原disable_mode同样保存恢复；失败横幅保持可绘制。覆盖层的SceneTree暂停与规划冻结相互独立。
+- Police.world_frozen不修改ai_enabled，不重置巡逻/调查/追击/警觉/致盲；发现信号同步触发冻结后，本物理回调立即停止运动。
+- _update_plan_execution在物理帧与渲染帧共同检查接管，接管优先于下一节点。执行、取消、自然结束、失败/重试、end_game共用冻结入口。此修复不代表真实关卡预演与执行的全部模拟规则已100%统一，也不改变现有回放快照范围。
+- 新规则没有存档字段；测试入口test_input_flow与独立test_planning_freeze，monkey检查状态互斥、世界/守卫冻结一致和恢复后无残留。
+
+
+## 多次探索的目标数据流（2026-11-19，仅设计）
+
+入口与验收见EXPLORATION_LOOP.md。本节不声明已新增字段/迁移；当前minimap仍读取全关卡房间并画未知暗框，visited_rooms仍属本次运行，finish_run仍依赖主目标，这些都待改。
+
+- 将“探索知识”从Museum运行态抽到Game可持久化记录：按稳定level/room/door/clue标识记录已知内容；地图、HUD、任务标记与预演只从已知视图读可展示信息，不直接泄露原始关卡布局。
+- 实际世界仍加载完整固定地图，迷雾只限制玩家信息；隐藏房间不能因UI不可见而在物理层消失。三主目标各有稳定实例位置，不随选择目标重生/换位。
+- 新增侦察撤离、目标带回、放弃的明确结算路径；mission_complete保持“实际携带目标”的语义，不能当大馆的唯一出口门槛。教学目标检查单独保留。
+- 知识记忆独立于可回滚物理快照；世界门锁、实物钥匙、背包、守卫、道具消耗完整回滚。长期捷径/钥匙按正常撤离提交，不借知识记录保留被回滚收益。
+- 普通物品需要实例状态台账，区分world/carried/stash/sold。原loot_stash字符串数组不直接改成对象数组，迁移方案须保留原字段语义，旧物品实例补ID一次且可重入；购置库存与携带库存分开，结算原子化。
+- 新存档字段命名与具体schema由实施批次确定，默认值/脏档/检查点/未来档必须测试；不要把本文建议直接当作已存在字段。
+- 后续测试补地图信息泄露、预演越雾、空手/普通战利品撤离、三目标只取一件、永久进度与回放边界、实例反刷与购物幂等。不降现有确定性/冻结门槛。
+
+## WSL协作桥（2026-11-21）
+
+详见[AGENT_LINK](AGENT_LINK.md)。消息由agentchattr统一保存；仓库agent_link通过已注册REST身份读写，SQLite事务同时提交观察水位和待投递任务，OpenCode CLI queue负责唤醒已绑定窗口。外部旧relay与新桥不可重复接管同一目标。API提交、人工/agent回执和测试通过为不同状态；超时重试是至少一次投递，处理者按消息ID去重。原生Claude需包装器续接，当前Codex应用窗口无本地入站唤醒接口，保持read/watch。桥不直接执行消息内命令，也不作为代码文件锁。
+
+## 运行快照的精确回退元数据（v0.26.3）
+
+Museum的模拟格坐标与回退元数据分开：player/item/smoke保留world_pos，守卫world_state保留原始浮点位置/朝向/计时，供回退使用；执行态按内核每tick更新真实AI计时，不能把起始元数据误用于执行同步。此为运行内快照，不新增用户存档字段。初入场建立合法回退点，执行结束不清空最后起点；回退在恢复背包/消耗品后同步保存，保留调查知识与局外购物状态。回归test_snapshot_handoff已挂verify。
+
+
+## 权威tick记录与路线终点（G13，2026-11-21）
+
+- SimPreview.simulate_route以本次步数预算为上限，在路线游标到末尾或首次发现时停止，与Museum实际执行一致；空路线不推进。run_preview的幽灵轨迹只重放实际结果长度。
+- snapshot_summary序列化整份快照，不省略移动余量、拿取/开锁进度、烟雾和事件。simulate_route第5参数record_steps可选保存每tick的snapshot、route动作进度、route_index独立副本，默认不存额外副本。
+- Museum.sim_tick_completed每个权威tick后发同结构独立副本，仅有订阅者才构建。一次物理更新推进多个tick时也逐个发出，测试不能再以每帧读取当前snapshot代替完整记录。
+- 无移动亦无动作的原地路线给中文反馈并留在规划，不创建执行快照或凭空推进tick。不新增存档字段。
+
+
+## 2026-11-23 调查闭环修复
+
+ChineseSearchEdit为电脑浏览器/聊天共用输入框：原生IME及项目关键词拼音辅助。InvestigationBoard在194px以上高度内显示材料、拖拽框、问题与关系选择；Investigation.record_relation校验材料已获得及必要链接，玩家确认后持久化结论并选择目标。Game.investigation_ready/can_prepare_mission供手机和安全屋房门复用。新说明使用saw_investigation_intro_v2兼容旧档。Museum世界绘制不依赖探索揭示；小地图与规划已知区域仍使用level_visited_rooms。
+
+推理板引导（v0.26.14）：从当前题目的requires和已连材料推导下一步，缺资料显示浏览器编号/名称或聊天入口；两项进度独立显示。外貌答对只切换问题，不替玩家回答展区；已完成题目即时勾选，柜号标为进馆后可选。按钮触发的选项刷新延迟到信号返回后，避免释放正在发信号的按钮。
+
+对话分页（v0.26.15）：dialogue_pages.gd共享按实际字体像素宽度的换行/分页逻辑。DialogueBox保留原说话人并将单条对白展成多页，打字机逐页工作；DialogueTree保持原剧本索引和标签不变，先翻完当前条目的所有页，再执行下一个条目，避免分页引发分支或旗标错位。正文限制页内行数，底部面板基准高度108px、展签基准220px，容器按字体高度伸展并由视口边界回归检查；选项按实际字体换行。分页不写存档。

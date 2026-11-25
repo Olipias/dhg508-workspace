@@ -1,0 +1,107 @@
+class_name InspectPage
+extends Control
+## 端详页（文物档案的"呈现层 B"）：文物特写 + 可点热点 + 史实展签卡。
+##
+## 热点数据来自 src/data/lore.gd（归一化坐标）；发现进度存 Game.lore_found（进存档）。
+## 展签卡通过信号交给 main 用 DialogueTree 展示。
+
+signal card_requested(item_id: String, card_id: String)
+
+const IMAGE_SIZE := 144.0  # 48×48 特写按 3× 展示
+
+@onready var image: TextureRect = $ImageWrap/Image
+@onready var markers: Control = $ImageWrap/Markers
+@onready var placeholder_label: Label = $ImageWrap/PlaceholderLabel
+@onready var title_label: Label = $Info/Title
+@onready var progress_label: Label = $Info/Progress
+@onready var fact_label: Label = $Info/Fact
+@onready var cards_box: VBoxContainer = $Info/Cards
+@onready var cards_label: Label = $Info/CardsLabel
+
+var _item_id := ""
+var _hotspots: Array = []
+var _marker_buttons: Array[Button] = []
+
+
+func set_item(item_id: String) -> void:
+	_item_id = item_id
+	_hotspots = Lore.hotspots(item_id)
+	title_label.text = Game.item_name(item_id)
+	var path := Lore.closeup_path(item_id)
+	if path != "" and ResourceLoader.exists(path):
+		image.texture = load(path)
+	else:
+		var icon := "res://assets/sprites/artifact_%s.png" % item_id
+		image.texture = load(icon) if ResourceLoader.exists(icon) else null
+	placeholder_label.visible = Lore.is_placeholder_closeup(item_id)
+	_build_markers()
+	_build_cards()
+	_select_hotspot(-1)
+
+
+func _build_markers() -> void:
+	for child in markers.get_children():
+		child.queue_free()
+	_marker_buttons.clear()
+	for i in _hotspots.size():
+		var hotspot: Dictionary = _hotspots[i]
+		var pos: Vector2 = hotspot.get("pos", Vector2(0.5, 0.5))
+		var button := Button.new()
+		button.text = "?"
+		button.custom_minimum_size = Vector2(18, 18)
+		button.size = Vector2(18, 18)
+		button.position = Vector2(pos.x * IMAGE_SIZE - 9, pos.y * IMAGE_SIZE - 9)
+		button.focus_mode = Control.FOCUS_NONE
+		button.pressed.connect(_select_hotspot.bind(i))
+		markers.add_child(button)
+		_marker_buttons.append(button)
+	_refresh_markers()
+
+
+func _refresh_markers() -> void:
+	for i in _marker_buttons.size():
+		var found := Game.hotspot_found(_item_id, i)
+		_marker_buttons[i].text = "✓" if found else "?"
+		_marker_buttons[i].modulate = Color("f5d766") if found else Color(0.75, 0.75, 0.8)
+
+
+func _select_hotspot(index: int) -> void:
+	var total := _hotspots.size()
+	var found := 0
+	for i in total:
+		if Game.hotspot_found(_item_id, i):
+			found += 1
+	progress_label.text = "已发现 %d / %d" % [found, total]
+	if total == 0:
+		progress_label.text = "暂无细节标记"
+		fact_label.text = "这件文物还没有可勘查的细节标记。"
+		return
+	if index < 0 or index >= total:
+		fact_label.text = "点击「?」标记，端详文物的细节。"
+		return
+	var hotspot: Dictionary = _hotspots[index]
+	Game.mark_hotspot(_item_id, index)
+	fact_label.text = "【档案】%s" % String(hotspot.get("fact", ""))
+	_refresh_markers()
+	# 更新进度（发现数可能刚刚 +1）
+	found = 0
+	for i in total:
+		if Game.hotspot_found(_item_id, i):
+			found += 1
+	progress_label.text = "已发现 %d / %d" % [found, total]
+
+
+## 展签卡列表：随身/归档文物全部直接可读。
+func _build_cards() -> void:
+	for child in cards_box.get_children():
+		child.queue_free()
+	var cards := Lore.cards(_item_id)
+	cards_label.visible = not cards.is_empty()
+	for card_id in cards:
+		var card: Dictionary = cards[card_id]
+		var button := Button.new()
+		button.text = String(card.get("title", card_id))
+		button.focus_mode = Control.FOCUS_NONE
+		button.custom_minimum_size = Vector2(0, 22)
+		button.pressed.connect(func() -> void: card_requested.emit(_item_id, String(card_id)))
+		cards_box.add_child(button)

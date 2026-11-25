@@ -1,0 +1,218 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://src/ui/mission_phone.gd" id="1_script"]
+[ext_resource type="Script" path="res://src/ui/relic_view.gd" id="2_relic"]
+[ext_resource type="PackedScene" path="res://src/ui/inspect_page.tscn" id="3_inspect"]
+[ext_resource type="Texture2D" path="res://assets/art/phone_noir_9p.png" id="4_frame"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_phone"]
+texture = ExtResource("4_frame")
+texture_margin_left = 12.0
+texture_margin_top = 12.0
+texture_margin_right = 12.0
+texture_margin_bottom = 12.0
+content_margin_left = 18.0
+content_margin_top = 16.0
+content_margin_right = 18.0
+content_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_phone"]
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+bg_color = Color(0.055, 0.062, 0.082, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.62, 0.5, 0.22, 0.95)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_paper"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0.871, 0.839, 0.753, 0.97)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.62, 0.5, 0.22, 0.8)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="PhoneTabNormal"]
+content_margin_left = 10.0
+content_margin_top = 4.0
+content_margin_right = 10.0
+content_margin_bottom = 4.0
+bg_color = Color(0.035, 0.09, 0.095, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.39, 0.31, 0.18, 1)
+
+[sub_resource type="StyleBoxFlat" id="PhoneTabActive"]
+content_margin_left = 10.0
+content_margin_top = 4.0
+content_margin_right = 10.0
+content_margin_bottom = 4.0
+bg_color = Color(0.75, 0.55, 0.25, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.95, 0.78, 0.45, 1)
+
+[sub_resource type="StyleBoxFlat" id="PhoneTabHover"]
+content_margin_left = 10.0
+content_margin_top = 4.0
+content_margin_right = 10.0
+content_margin_bottom = 4.0
+bg_color = Color(0.12, 0.2, 0.2, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.8, 0.62, 0.32, 1)
+
+[node name="MissionPhone" type="CanvasLayer"]
+process_mode = 3
+layer = 12
+script = ExtResource("1_script")
+
+[node name="Root" type="Control" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Dim" type="ColorRect" parent="Root"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.02, 0.04, 0.86)
+
+[node name="Panel" type="PanelContainer" parent="Root"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_phone")
+custom_minimum_size = Vector2(560, 0)
+
+[node name="Margin" type="MarginContainer" parent="Root/Panel"]
+
+[node name="VBox" type="VBoxContainer" parent="Root/Panel/Margin"]
+theme_override_constants/separation = 6
+
+[node name="Header" type="HBoxContainer" parent="Root/Panel/Margin/VBox"]
+theme_override_constants/separation = 6
+
+[node name="OrgLabel" type="Label" parent="Root/Panel/Margin/VBox/Header"]
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.96, 0.84, 0.4, 1)
+theme_override_font_sizes/font_size = 14
+text = "神偷组织 · 任务终端"
+
+[node name="TabTask" type="Button" parent="Root/Panel/Margin/VBox/Header"]
+theme_override_styles/normal = SubResource("PhoneTabNormal")
+theme_override_styles/hover = SubResource("PhoneTabHover")
+theme_override_styles/pressed = SubResource("PhoneTabActive")
+theme_override_colors/font_pressed_color = Color(0.1, 0.08, 0.05, 1)
+theme_override_font_sizes/font_size = 10
+toggle_mode = true
+button_pressed = true
+text = "任务"
+
+[node name="TabArchive" type="Button" parent="Root/Panel/Margin/VBox/Header"]
+theme_override_styles/normal = SubResource("PhoneTabNormal")
+theme_override_styles/hover = SubResource("PhoneTabHover")
+theme_override_styles/pressed = SubResource("PhoneTabActive")
+theme_override_colors/font_pressed_color = Color(0.1, 0.08, 0.05, 1)
+theme_override_font_sizes/font_size = 10
+toggle_mode = true
+text = "档案"
+
+[node name="TaskPage" type="VBoxContainer" parent="Root/Panel/Margin/VBox"]
+theme_override_constants/separation = 6
+
+[node name="Body" type="HBoxContainer" parent="Root/Panel/Margin/VBox/TaskPage"]
+theme_override_constants/separation = 12
+
+[node name="RelicCard" type="PanelContainer" parent="Root/Panel/Margin/VBox/TaskPage/Body"]
+custom_minimum_size = Vector2(86, 100)
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_paper")
+
+[node name="Relic" type="Control" parent="Root/Panel/Margin/VBox/TaskPage/Body/RelicCard"]
+custom_minimum_size = Vector2(72, 84)
+mouse_filter = 2
+script = ExtResource("2_relic")
+
+[node name="Info" type="VBoxContainer" parent="Root/Panel/Margin/VBox/TaskPage/Body"]
+custom_minimum_size = Vector2(390, 0)
+theme_override_constants/separation = 3
+
+[node name="TargetName" type="Label" parent="Root/Panel/Margin/VBox/TaskPage/Body/Info"]
+theme_override_colors/font_color = Color(0.96, 0.84, 0.4, 1)
+theme_override_font_sizes/font_size = 14
+text = "任务目标"
+
+[node name="Meta" type="Label" parent="Root/Panel/Margin/VBox/TaskPage/Body/Info"]
+theme_override_colors/font_color = Color(0.78, 0.8, 0.86, 1)
+theme_override_font_sizes/font_size = 10
+autowrap_mode = 2
+text = "行动地点："
+
+[node name="Story" type="Label" parent="Root/Panel/Margin/VBox/TaskPage/Body/Info"]
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.68, 0.7, 0.78, 1)
+theme_override_font_sizes/font_size = 10
+autowrap_mode = 2
+text = ""
+
+[node name="ArchiveCard" type="PanelContainer" parent="Root/Panel/Margin/VBox/TaskPage/Body/Info"]
+theme_override_styles/panel = SubResource("StyleBoxFlat_paper")
+
+[node name="Archive" type="Label" parent="Root/Panel/Margin/VBox/TaskPage/Body/Info/ArchiveCard"]
+theme_override_colors/font_color = Color(0.26, 0.22, 0.16, 1)
+theme_override_font_sizes/font_size = 9
+autowrap_mode = 2
+text = ""
+
+[node name="Notes" type="Label" parent="Root/Panel/Margin/VBox/TaskPage/Body/Info"]
+theme_override_colors/font_color = Color(0.55, 0.5, 0.4, 1)
+theme_override_font_sizes/font_size = 9
+autowrap_mode = 2
+text = ""
+
+[node name="ArchivePage" type="HBoxContainer" parent="Root/Panel/Margin/VBox"]
+visible = false
+theme_override_constants/separation = 10
+
+[node name="ItemList" type="VBoxContainer" parent="Root/Panel/Margin/VBox/ArchivePage"]
+custom_minimum_size = Vector2(130, 0)
+theme_override_constants/separation = 4
+
+[node name="Inspect" parent="Root/Panel/Margin/VBox/ArchivePage" instance=ExtResource("3_inspect")]
+
+[node name="Footer" type="Label" parent="Root/Panel/Margin/VBox"]
+theme_override_colors/font_color = Color(0.45, 0.47, 0.53, 1)
+theme_override_font_sizes/font_size = 9
+text = "任务 / 档案 · P / B / ESC 关闭"
+horizontal_alignment = 2

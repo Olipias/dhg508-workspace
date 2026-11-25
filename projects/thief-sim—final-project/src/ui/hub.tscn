@@ -1,0 +1,306 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/ui/hub.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/art/safehouse_noir.png" id="2_bg"]
+
+[node name="Hub" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.063, 0.071, 0.094, 1)
+mouse_filter = 2
+
+[node name="SafehouseBg" type="TextureRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="TopShade" type="ColorRect" parent="."]
+anchor_right = 1.0
+offset_bottom = 72.0
+grow_horizontal = 2
+color = Color(0.02, 0.03, 0.04, 0.18)
+mouse_filter = 2
+
+[node name="ContentShade" type="ColorRect" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -208.0
+offset_top = 68.0
+offset_right = 208.0
+offset_bottom = 330.0
+grow_horizontal = 2
+color = Color(0.02, 0.03, 0.04, 0.14)
+mouse_filter = 2
+
+[node name="HeaderShade" type="ColorRect" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -208.0
+offset_top = 68.0
+offset_right = 208.0
+offset_bottom = 112.0
+grow_horizontal = 2
+color = Color(0.02, 0.03, 0.04, 0.22)
+mouse_filter = 2
+
+[node name="BottomShade" type="ColorRect" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -208.0
+offset_top = -36.0
+offset_right = 208.0
+grow_horizontal = 2
+grow_vertical = 0
+color = Color(0.02, 0.03, 0.04, 0.22)
+mouse_filter = 2
+
+[node name="Title" type="Label" parent="."]
+offset_left = 16.0
+offset_top = 10.0
+offset_right = 260.0
+offset_bottom = 36.0
+theme_override_colors/font_color = Color(0.96, 0.84, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 16
+text = "神偷组织 · 据点"
+
+[node name="MoneyLabel" type="Label" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -260.0
+offset_top = 12.0
+offset_right = -16.0
+offset_bottom = 32.0
+grow_horizontal = 0
+theme_override_colors/font_color = Color(0.97, 0.84, 0.35, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+text = "金币 0"
+horizontal_alignment = 2
+
+[node name="TabLevels" type="Button" parent="."]
+offset_left = 16.0
+offset_top = 42.0
+offset_right = 96.0
+offset_bottom = 66.0
+toggle_mode = true
+button_pressed = true
+text = "任务"
+
+[node name="TabShop" type="Button" parent="."]
+offset_left = 102.0
+offset_top = 42.0
+offset_right = 182.0
+offset_bottom = 66.0
+toggle_mode = true
+text = "商店"
+
+[node name="TabSell" type="Button" parent="."]
+offset_left = 188.0
+offset_top = 42.0
+offset_right = 268.0
+offset_bottom = 66.0
+toggle_mode = true
+text = "销赃"
+
+[node name="TabReason" type="Button" parent="."]
+offset_left = 274.0
+offset_top = 42.0
+offset_right = 354.0
+offset_bottom = 66.0
+toggle_mode = true
+text = "推理"
+
+[node name="QuitButton" type="Button" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -100.0
+offset_top = 42.0
+offset_right = -16.0
+offset_bottom = 66.0
+grow_horizontal = 0
+text = "返回标题"
+
+[node name="LevelsBox" type="VBoxContainer" parent="."]
+offset_left = 120.0
+offset_top = 74.0
+offset_right = 520.0
+offset_bottom = 330.0
+theme_override_constants/separation = 8
+
+[node name="ReasonBox" type="VBoxContainer" parent="."]
+visible = false
+offset_left = 32.0
+offset_top = 74.0
+offset_right = 608.0
+offset_bottom = 330.0
+theme_override_constants/separation = 2
+
+[node name="Shop" type="VBoxContainer" parent="."]
+visible = false
+offset_left = 120.0
+offset_top = 82.0
+offset_right = 520.0
+offset_bottom = 254.0
+theme_override_constants/separation = 6
+
+[node name="RowBackpack" type="PanelContainer" parent="Shop"]
+custom_minimum_size = Vector2(0, 50)
+
+[node name="HBox" type="HBoxContainer" parent="Shop/RowBackpack"]
+theme_override_constants/separation = 8
+
+[node name="Info" type="VBoxContainer" parent="Shop/RowBackpack/HBox"]
+size_flags_horizontal = 3
+
+[node name="Name" type="Label" parent="Shop/RowBackpack/HBox/Info"]
+text = "加固背包"
+
+[node name="Desc" type="Label" parent="Shop/RowBackpack/HBox/Info"]
+theme_override_colors/font_color = Color(0.62, 0.66, 0.74, 1)
+text = "背包格子扩容"
+
+[node name="Price" type="Label" parent="Shop/RowBackpack/HBox"]
+custom_minimum_size = Vector2(96, 0)
+theme_override_colors/font_color = Color(0.97, 0.84, 0.35, 1)
+text = "250 金币"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Buy" type="Button" parent="Shop/RowBackpack/HBox"]
+custom_minimum_size = Vector2(72, 0)
+text = "购买"
+
+[node name="RowSneakers" type="PanelContainer" parent="Shop"]
+custom_minimum_size = Vector2(0, 50)
+
+[node name="HBox" type="HBoxContainer" parent="Shop/RowSneakers"]
+theme_override_constants/separation = 8
+
+[node name="Info" type="VBoxContainer" parent="Shop/RowSneakers/HBox"]
+size_flags_horizontal = 3
+
+[node name="Name" type="Label" parent="Shop/RowSneakers/HBox/Info"]
+text = "静音跑鞋"
+
+[node name="Desc" type="Label" parent="Shop/RowSneakers/HBox/Info"]
+theme_override_colors/font_color = Color(0.62, 0.66, 0.74, 1)
+text = "疾跑速度提升 25%"
+
+[node name="Price" type="Label" parent="Shop/RowSneakers/HBox"]
+custom_minimum_size = Vector2(96, 0)
+theme_override_colors/font_color = Color(0.97, 0.84, 0.35, 1)
+text = "400 金币"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Buy" type="Button" parent="Shop/RowSneakers/HBox"]
+custom_minimum_size = Vector2(72, 0)
+text = "购买"
+
+[node name="RowSmoke" type="PanelContainer" parent="Shop"]
+custom_minimum_size = Vector2(0, 50)
+
+[node name="HBox" type="HBoxContainer" parent="Shop/RowSmoke"]
+theme_override_constants/separation = 8
+
+[node name="Info" type="VBoxContainer" parent="Shop/RowSmoke/HBox"]
+size_flags_horizontal = 3
+
+[node name="Name" type="Label" parent="Shop/RowSmoke/HBox/Info"]
+text = "烟雾弹"
+
+[node name="Desc" type="Label" parent="Shop/RowSmoke/HBox/Info"]
+theme_override_colors/font_color = Color(0.62, 0.66, 0.74, 1)
+text = "脱身道具：附近警察短暂失去目标"
+
+[node name="Price" type="Label" parent="Shop/RowSmoke/HBox"]
+custom_minimum_size = Vector2(96, 0)
+theme_override_colors/font_color = Color(0.97, 0.84, 0.35, 1)
+text = "120 金币"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Buy" type="Button" parent="Shop/RowSmoke/HBox"]
+custom_minimum_size = Vector2(72, 0)
+text = "购买"
+
+[node name="SellBox" type="VBoxContainer" parent="."]
+visible = false
+offset_left = 120.0
+offset_top = 82.0
+offset_right = 520.0
+offset_bottom = 320.0
+theme_override_constants/separation = 6
+
+[node name="SellHeader" type="HBoxContainer" parent="SellBox"]
+
+[node name="SellTitle" type="Label" parent="SellBox/SellHeader"]
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.96, 0.84, 0.4, 1)
+text = "据点仓库"
+
+[node name="SellTotal" type="Label" parent="SellBox/SellHeader"]
+theme_override_colors/font_color = Color(0.97, 0.84, 0.35, 1)
+text = "估值 0 金币"
+horizontal_alignment = 2
+
+[node name="SellScroll" type="ScrollContainer" parent="SellBox"]
+custom_minimum_size = Vector2(0, 150)
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="SellList" type="VBoxContainer" parent="SellBox/SellScroll"]
+size_flags_horizontal = 3
+theme_override_constants/separation = 3
+
+[node name="SellAll" type="Button" parent="SellBox"]
+custom_minimum_size = Vector2(0, 26)
+text = "全部出手"
+
+[node name="Feedback" type="Label" parent="."]
+visible = false
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -260.0
+offset_top = 262.0
+offset_right = 260.0
+offset_bottom = 282.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.78, 0.82, 0.9, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+horizontal_alignment = 1
+
+[node name="Hint" type="Label" parent="."]
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = -26.0
+offset_right = 624.0
+offset_bottom = -8.0
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.66, 0.68, 0.64, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+text = "点击卡片开始行动 · 任务详情见手机（P）· 存档自动保存"

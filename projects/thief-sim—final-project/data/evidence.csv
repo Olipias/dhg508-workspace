@@ -1,0 +1,9 @@
+claim,evidence,locator,level,limit
+The double-ram zun has separately cast horns attached by lock-on casting.,Wang and Priewe 2013,p. 266,据,Does not establish a complete ownership history before 1936.
+The double-ram zun belongs to a southern Chinese bronze tradition.,Wang and Priewe 2013,p. 273,推断,Does not prove a specific excavated findspot in Hunan.
+Heart scarab 10.130.1650 is dark green stone donated in 1910.,Met object 10.130.1650,Artwork Details,据,Does not document earlier excavation or export from Egypt.
+Painted askos VM-GR-25-012 comes from the West House at Akrotiri.,UNESCO VM-GR-25-012,About the object,据,The ancient West House is an archaeological building rather than a modern museum wing.
+Three principal relics appear in one mission museum.,src/data/investigation.gd,Story scenario,设,Fictional temporary display rather than real simultaneous exhibition.
+A demon contract motivates the protagonist and frames delivery choices.,src/data/story.gd,Opening CG & ending branches,设,Fictional narrative premise rather than historical or legal authority.
+Rehearsal and execution traces match tick by tick on identical snapshots.,tests/test_museum_sim.gd,52-check museum sim suite,据,Covers deterministic stealth rules rather than historical museum operations.
+

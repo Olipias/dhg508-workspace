@@ -1,0 +1,25 @@
+{
+  "windows": {
+    "zip_integrity": "passed",
+    "bytes": 47741936,
+    "sha256": "2a215769d439f2c6f919dde8d0703683f9f8281bba2c8e5dc06c91d74887428e",
+    "architecture": "PE x86_64"
+  },
+  "linux": {
+    "zip_integrity": "passed",
+    "bytes": 38138909,
+    "sha256": "c150f747abbef54391448fea58d26040caad9fbde1cf45def2008a4d178ece3a",
+    "architecture": "ELF x86_64; executable permission retained"
+  },
+  "macos": {
+    "zip_integrity": "passed",
+    "bytes": 70311199,
+    "sha256": "19167c6637259813d9b8f84aa970358230ef97c95c408353fdb4fd944debacd2",
+    "architecture": "Universal 2: x86_64 + arm64",
+    "bundle_identifier": "org.thiefsim.game",
+    "version": "0.26.16",
+    "executable": "小偷模拟器.app/Contents/MacOS/小偷模拟器",
+    "executable_mode": "0o100755",
+    "signature": "LC_CODE_SIGNATURE in both architectures; CodeResources present (ad-hoc, not notarized)"
+  }
+}

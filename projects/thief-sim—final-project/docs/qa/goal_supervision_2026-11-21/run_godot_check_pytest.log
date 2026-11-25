@@ -1,0 +1,11 @@
+============================= test session starts ==============================
+platform linux -- Python 3.14.4, pytest-9.2.0, pluggy-1.7.0
+rootdir: /home/liyutong/thief-sim
+configfile: pytest.ini
+plugins: typeguard-4.4.4
+collected 14 items
+
+tests/test_run_godot_check.py ..............                             [100%]
+
+============================== 14 passed in 3.46s ==============================
+EXIT 0

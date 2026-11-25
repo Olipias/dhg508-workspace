@@ -1,0 +1,215 @@
+class_name DialogueTree
+extends CanvasLayer
+## 器灵对谈：带选项与展签卡的对话树（文物志的"呈现层 A"）。
+##
+## 剧本条目类型（见 src/data/lore.gd）：
+##   {"speaker","text"}                 —— 器灵台词（演绎，深色对话框）
+##   {"card","id"}                      —— 展签卡（史实，米白纸卡，与台词视觉分离）
+##   {"choices":[{"text","goto"}]}      —— 选项，选中跳转到同名 label
+##   {"label","name"}                   —— 跳转锚点（不显示）
+##   {"goto","name"}                    —— 跳转
+
+signal finished
+const Pages := preload("res://src/ui/dialogue_pages.gd")
+var _pages: Array[String] = []
+var _page_index := 0
+var _page_label: Label
+var _page_hint: Label
+
+@onready var speech_panel: PanelContainer = $Root/SpeechPanel
+@onready var speaker_label: Label = $Root/SpeechPanel/VBox/Speaker
+@onready var speech_text: Label = $Root/SpeechPanel/VBox/Text
+@onready var card_panel: PanelContainer = $Root/CardPanel
+@onready var card_title: Label = $Root/CardPanel/VBox/Title
+@onready var card_body: Label = $Root/CardPanel/VBox/Body
+@onready var card_source: Label = $Root/CardPanel/VBox/Source
+@onready var choices_box: VBoxContainer = $Root/ChoicesBox
+
+var _script: Array = []
+var _cards: Dictionary = {}
+var _labels: Dictionary = {}
+var _index := 0
+var _active := false
+## 允许 P / ESC 直接关闭本层（卡片叠层用；对谈剧本保持 false，须推进完）。
+var escapable := false
+var _on_finished: Callable = Callable()
+var _choice_buttons: Array[Button] = []
+var _choice_index := 0
+
+
+func _ready() -> void:
+	visible = false
+
+
+func is_active() -> bool:
+	return _active
+
+
+## 播放一段剧本；on_finished 在本段结束时调用（用于推进文物志进度）。
+func play(entries: Array, cards: Dictionary, on_finished := Callable(), allow_escape := false) -> void:
+	_script = entries
+	_cards = cards
+	_on_finished = on_finished
+	escapable = allow_escape
+	_index = 0
+	_active = true
+	_labels.clear()
+	for i in _script.size():
+		var entry: Dictionary = _script[i]
+		if entry.has("label"):
+			_labels[String(entry["label"])] = i
+	visible = true
+	_step()
+
+
+func _step() -> void:
+	_hide_all()
+	_pages.clear()
+	_page_index = 0
+	if _index >= _script.size():
+		_finish()
+		return
+	var entry: Dictionary = _script[_index]
+	if entry.has("label"):
+		_index += 1
+		_step()
+		return
+	if entry.has("set_flag"):
+		var flag_key := String(entry["set_flag"])
+		var flag_value: Variant = entry.get("value", true)
+		if flag_value is bool:
+			Game.set_story_flag(flag_key, flag_value)
+		else:
+			Game.story_flags[flag_key] = flag_value
+			Game.save_game()
+		_index += 1
+		_step()
+		return
+	if entry.has("goto"):
+		_index = int(_labels.get(String(entry["goto"]), _script.size()))
+		_step()
+		return
+	if entry.has("card"):
+		_show_card(String(entry["card"]))
+		return
+	if entry.has("choices"):
+		_show_choices(entry["choices"])
+		return
+	_show_speech(String(entry.get("speaker", "")), String(entry.get("text", "")))
+
+
+func advance() -> void:
+	if not _active or choices_box.visible:
+		return
+	if _page_index + 1 < _pages.size():
+		_page_index += 1
+		_render_page()
+		return
+	_index += 1
+	_step()
+
+
+func _render_page() -> void:
+	_page_label.text = _pages[_page_index]
+	_page_hint.text = Pages.hint(_page_index, _pages.size())
+
+func _start_pages(text: String, label: Label, hint: Label, width: float, max_lines: int) -> void:
+	_pages = Pages.split(text, label, width, max_lines)
+	_page_index = 0
+	_page_label = label
+	_page_hint = hint
+	_render_page()
+
+func _show_speech(speaker: String, text: String) -> void:
+	speaker_label.text = speaker
+	speaker_label.visible = speaker != ""
+	_start_pages(text, speech_text, $Root/SpeechPanel/VBox/Hint, 566.0, 3)
+	speech_panel.visible = true
+
+
+func _show_card(card_id: String) -> void:
+	var card: Dictionary = _cards.get(card_id, {})
+	card_title.text = String(card.get("title", card_id))
+	_start_pages(String(card.get("body", "")), card_body, $Root/CardPanel/VBox/Hint, 486.0, 8)
+	card_source.text = ""
+	card_source.visible = false
+	card_panel.visible = true
+
+
+func _show_choices(choices: Array) -> void:
+	_choice_buttons.clear()
+	for child in choices_box.get_children():
+		child.queue_free()
+	for choice in choices:
+		var button := Button.new()
+		button.add_theme_font_size_override("font_size", 12)
+		button.text = "\n".join(Pages.lines(String(choice.get("text", "…")), speech_text, 430.0))
+		button.focus_mode = Control.FOCUS_ALL
+		button.pressed.connect(_on_choice.bind(String(choice.get("goto", ""))))
+		choices_box.add_child(button)
+		_choice_buttons.append(button)
+	_choice_index = 0
+	choices_box.visible = true
+	if not _choice_buttons.is_empty():
+		_choice_buttons[0].grab_focus()
+
+
+func _on_choice(goto: String) -> void:
+	if not _active:
+		return
+	_index = int(_labels.get(goto, _script.size()))
+	_step()
+
+
+func _hide_all() -> void:
+	speech_panel.visible = false
+	card_panel.visible = false
+	choices_box.visible = false
+
+
+func _finish() -> void:
+	_active = false
+	visible = false
+	if _on_finished.is_valid():
+		_on_finished.call()
+	finished.emit()
+
+
+## 直接关闭本层（不触发 on_finished 回调），用于 ESC/P 逐层返回与兜底清理。
+func close() -> void:
+	if not _active:
+		return
+	_on_finished = Callable()
+	_finish()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not _active:
+		return
+	if escapable and (
+		event.is_action_pressed("phone")
+		or event.is_action_pressed("pause")
+		or event.is_action_pressed("ui_cancel")
+	):
+		close()
+		get_viewport().set_input_as_handled()
+		return
+	if choices_box.visible:
+		var moved := 0
+		if event.is_action_pressed("move_up"):
+			moved = -1
+		elif event.is_action_pressed("move_down"):
+			moved = 1
+		if moved != 0 and not _choice_buttons.is_empty():
+			_choice_index = wrapi(_choice_index + moved, 0, _choice_buttons.size())
+			_choice_buttons[_choice_index].grab_focus()
+			get_viewport().set_input_as_handled()
+			return
+		if Input.is_action_just_pressed("interact"):
+			if not _choice_buttons.is_empty():
+				_choice_buttons[_choice_index].pressed.emit()
+			get_viewport().set_input_as_handled()
+		return
+	if Input.is_action_just_pressed("interact") or Input.is_action_just_pressed("ui_accept"):
+		advance()
+		get_viewport().set_input_as_handled()

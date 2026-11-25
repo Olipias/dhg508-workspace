@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+FAIL - 路线完成即停止预演，不追加98个等待tick
+FAIL - 路线终点快照与实际执行终点一致
+FAIL - 空路线不凭空推进世界
+FAIL - max_ticks是本次步数预算，支持非零起点
+FAIL - 完整摘要区分玩家move_counter
+FAIL - 完整摘要区分玩家take_progress
+FAIL - 完整摘要区分玩家unlock_progress
+FAIL - 完整摘要区分守卫移动计时
+FAIL - 完整摘要区分携带消耗品
+FAILED 9 / 51 checks

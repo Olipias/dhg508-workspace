@@ -1,0 +1,22 @@
+test_cli_requires_command (test_run_godot_check.RunGodotCheckTests.test_cli_requires_command) ... usage: python3 -m unittest [-h] [--fatal-grace FATAL_GRACE] ...
+python3 -m unittest: error: missing command after --
+ok
+test_exception_while_forwarding_cleans_own_group (test_run_godot_check.RunGodotCheckTests.test_exception_while_forwarding_cleans_own_group) ... ok
+test_fatal_stops_command_and_returns_nonzero (test_run_godot_check.RunGodotCheckTests.test_fatal_stops_command_and_returns_nonzero) ... ok
+test_fatal_then_child_nonzero_is_preserved (test_run_godot_check.RunGodotCheckTests.test_fatal_then_child_nonzero_is_preserved) ... ok
+test_fatal_then_zero_exit_still_fails (test_run_godot_check.RunGodotCheckTests.test_fatal_then_zero_exit_still_fails) ... ok
+test_grandchild_in_same_group_is_cleaned_up (test_run_godot_check.RunGodotCheckTests.test_grandchild_in_same_group_is_cleaned_up) ... ok
+test_leader_exits_but_grandchild_ignoring_term_is_killed (test_run_godot_check.RunGodotCheckTests.test_leader_exits_but_grandchild_ignoring_term_is_killed) ... ok
+test_missing_executable_returns_127 (test_run_godot_check.RunGodotCheckTests.test_missing_executable_returns_127) ... [run_godot_check] cannot start command: [Errno 2] No such file or directory: '/nonexistent/definitely-not-here'
+ok
+test_nonzero_exit_is_preserved (test_run_godot_check.RunGodotCheckTests.test_nonzero_exit_is_preserved) ... ok
+test_normal_output_and_zero_exit (test_run_godot_check.RunGodotCheckTests.test_normal_output_and_zero_exit) ... ok
+test_parse_json_error_is_not_fatal (test_run_godot_check.RunGodotCheckTests.test_parse_json_error_is_not_fatal) ... ok
+test_sigint_to_wrapper_cleans_child_and_returns_130 (test_run_godot_check.RunGodotCheckTests.test_sigint_to_wrapper_cleans_child_and_returns_130) ... ok
+test_sigterm_to_wrapper_cleans_child_and_returns_143 (test_run_godot_check.RunGodotCheckTests.test_sigterm_to_wrapper_cleans_child_and_returns_143) ... ok
+test_unrelated_sibling_process_survives (test_run_godot_check.RunGodotCheckTests.test_unrelated_sibling_process_survives) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 3.505s
+
+OK

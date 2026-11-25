@@ -1,0 +1,2 @@
+4933c2ad1bd473a0088bc89d8a8c99d37e9ccbfa23e12e90ad9e73cf6b6f8ec4  thief-sim-v0.26.13-linux.zip
+122a71effda23e89189e712ce05249684026097a505ab9d57f581c0a09d255bd  thief-sim-v0.26.13-windows.zip

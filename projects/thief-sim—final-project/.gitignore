@@ -1,0 +1,28 @@
+# Godot 导入缓存与编辑器状态（可自动重建，不进版本库）
+.godot/
+
+# Python 工具脚本缓存
+__pycache__/
+*.pyc
+
+# 系统杂项
+.DS_Store
+*:Zone.Identifier
+
+# 3D 素材：Blender 备份与下载的源模型（63MB，仅本地参考）
+assets/models/*.blend1
+assets/models/e6b392*.glb
+
+# 导出/打包产物（本地生成，不提交）
+build/
+
+# agentchattr 房间令牌（本机私有，不进版本库）
+tools/.agentchattr_token
+
+# 课堂演示 pytest 本地依赖（requirements-demo.txt 可重装）
+tools/demo_lib/
+.venv/
+
+# Local collaboration identities, delivery queue and session mappings
+.agent-link/
+tools/.relay_targets.json

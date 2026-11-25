@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://dhgyuy7yjq373"
+
+[deps]
+
+files=["res://paper/evidence.evidence.translation", "res://paper/evidence.locator.translation", "res://paper/evidence.level.translation", "res://paper/evidence.limit.translation"]
+
+source_file="res://paper/evidence.csv"
+dest_files=["res://paper/evidence.evidence.translation", "res://paper/evidence.locator.translation", "res://paper/evidence.level.translation", "res://paper/evidence.limit.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

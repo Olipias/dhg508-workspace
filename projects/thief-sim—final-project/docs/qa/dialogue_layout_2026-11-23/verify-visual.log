@@ -1,0 +1,1009 @@
+
+==> 文档自检（链接 / CHANGELOG 格式）
+check_docs OK（链接 142 条可达；CHANGELOG 90 个版本条目）
+
+==> 验证进程清理自检（真实子进程）
+test_cli_requires_command (test_run_godot_check.RunGodotCheckTests.test_cli_requires_command) ... usage: python3 -m unittest [-h] [--fatal-grace FATAL_GRACE] ...
+python3 -m unittest: error: missing command after --
+ok
+test_exception_while_forwarding_cleans_own_group (test_run_godot_check.RunGodotCheckTests.test_exception_while_forwarding_cleans_own_group) ... ok
+test_fatal_stops_command_and_returns_nonzero (test_run_godot_check.RunGodotCheckTests.test_fatal_stops_command_and_returns_nonzero) ... ok
+test_fatal_then_child_nonzero_is_preserved (test_run_godot_check.RunGodotCheckTests.test_fatal_then_child_nonzero_is_preserved) ... ok
+test_fatal_then_zero_exit_still_fails (test_run_godot_check.RunGodotCheckTests.test_fatal_then_zero_exit_still_fails) ... ok
+test_grandchild_in_same_group_is_cleaned_up (test_run_godot_check.RunGodotCheckTests.test_grandchild_in_same_group_is_cleaned_up) ... ok
+test_leader_exits_but_grandchild_ignoring_term_is_killed (test_run_godot_check.RunGodotCheckTests.test_leader_exits_but_grandchild_ignoring_term_is_killed) ... ok
+test_missing_executable_returns_127 (test_run_godot_check.RunGodotCheckTests.test_missing_executable_returns_127) ... [run_godot_check] cannot start command: [Errno 2] No such file or directory: '/nonexistent/definitely-not-here'
+ok
+test_nonzero_exit_is_preserved (test_run_godot_check.RunGodotCheckTests.test_nonzero_exit_is_preserved) ... ok
+test_normal_output_and_zero_exit (test_run_godot_check.RunGodotCheckTests.test_normal_output_and_zero_exit) ... ok
+test_parse_json_error_is_not_fatal (test_run_godot_check.RunGodotCheckTests.test_parse_json_error_is_not_fatal) ... ok
+test_sigint_to_wrapper_cleans_child_and_returns_130 (test_run_godot_check.RunGodotCheckTests.test_sigint_to_wrapper_cleans_child_and_returns_130) ... ok
+test_sigterm_to_wrapper_cleans_child_and_returns_143 (test_run_godot_check.RunGodotCheckTests.test_sigterm_to_wrapper_cleans_child_and_returns_143) ... ok
+test_unrelated_sibling_process_survives (test_run_godot_check.RunGodotCheckTests.test_unrelated_sibling_process_survives) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 3.481s
+
+OK
+
+==> 关卡数据自检（生成物与脚本同步）
+check_level OK（2 个关卡：生成物与脚本同步）
+
+==> 资源导入（新增/改动贴图与音效）
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Started Project initialization (5 steps)[39m[0m
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Scanning file structure...[39m[0m
+[  16% ] [90m[1mfirst_scan_filesystem[22m | Loading global class names...[39m[0m
+[  33% ] [90m[1mfirst_scan_filesystem[22m | Verifying GDExtensions...[39m[0m
+[  50% ] [90m[1mfirst_scan_filesystem[22m | Creating autoload scripts...[39m[0m
+[  66% ] [90m[1mfirst_scan_filesystem[22m | Initializing plugins...[39m[0m
+[  83% ] [90m[1mfirst_scan_filesystem[22m | Starting file scan...[39m[0m
+[92m[ DONE ][39m [1mfirst_scan_filesystem[22m
+[0m
+[   0% ] [90m[1m_update_scan_actions[22m | Started Scanning actions... (6 steps)[39m[0m
+[   0% ] [90m[1m_update_scan_actions[22m | shot_bm_note.png[39m[0m
+[  14% ] [90m[1m_update_scan_actions[22m | shot_dialogue.png[39m[0m
+[  28% ] [90m[1m_update_scan_actions[22m | shot_long_card.png[39m[0m
+[  42% ] [90m[1m_update_scan_actions[22m | shot_long_card_page2.png[39m[0m
+[  57% ] [90m[1m_update_scan_actions[22m | shot_long_dialogue.png[39m[0m
+[  71% ] [90m[1m_update_scan_actions[22m | shot_long_story.png[39m[0m
+[92m[ DONE ][39m [1m_update_scan_actions[22m
+[0m
+[   0% ] [90m[1mreimport[22m | Started (Re)Importing Assets (6 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  14% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  28% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  42% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  57% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  71% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   0% ] [90m[1mreimport[22m | Executing pre-reimport operations...[39m[0m
+[   0% ] [90m[1mreimport[22m | shot_bm_note.png[39m[0m
+[  14% ] [90m[1mreimport[22m | shot_dialogue.png[39m[0m
+[  28% ] [90m[1mreimport[22m | shot_long_card.png[39m[0m
+[  42% ] [90m[1mreimport[22m | shot_long_card_page2.png[39m[0m
+[  57% ] [90m[1mreimport[22m | shot_long_dialogue.png[39m[0m
+[  71% ] [90m[1mreimport[22m | shot_long_story.png[39m[0m
+[  85% ] [90m[1mreimport[22m | Finalizing Asset Import...[39m[0m
+[92m[ DONE ][39m [1mreimport[22m
+[0m
+[   0% ] [90m[1mreimport[22m | Started (Re)Importing Assets (6 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | Executing post-reimport operations...[39m[0m
+[92m[ DONE ][39m [1mreimport[22m
+[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Started Loading editor (5 steps)[39m[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Loading editor layout...[39m[0m
+[  16% ] [90m[1mloading_editor_layout[22m | Loading docks...[39m[0m
+[  33% ] [90m[1mloading_editor_layout[22m | Reopening scenes...[39m[0m
+[  50% ] [90m[1mloading_editor_layout[22m | Loading central editor layout...[39m[0m
+[  66% ] [90m[1mloading_editor_layout[22m | Loading plugin window layout...[39m[0m
+[  83% ] [90m[1mloading_editor_layout[22m | Editor layout ready.[39m[0m
+[92m[ DONE ][39m [1mloading_editor_layout[22m
+[0m
+
+==> GDScript 编译检查（src + tests）
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ALL 63 SCRIPTS COMPILE
+
+==> 逻辑单测
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ALL 2554 CHECKS PASSED
+
+==> 内容一致性测试
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ALL 635 CHECKS PASSED
+
+==> 输入流自检（真实按键驱动 UI 覆盖层）
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS - 覆盖层节点已接线（Backpack / Phone / DialogueTree）
+PASS - 关卡已开始（museum）
+PASS - 任务简报已跳过
+PASS - 分页换行：正常英文姓名不拆到两行
+PASS - 长对话：自动分页且未截断
+PASS - 普通对话：面板留在640×360视口
+PASS - 普通对话：正文留在面板内
+PASS - 普通对话：每行实际字宽不超正文区
+PASS - 普通对话：面板留在640×360视口
+PASS - 普通对话：正文留在面板内
+PASS - 普通对话：每行实际字宽不超正文区
+PASS - 普通对话：面板留在640×360视口
+PASS - 普通对话：正文留在面板内
+PASS - 普通对话：每行实际字宽不超正文区
+PASS - 普通对话：面板留在640×360视口
+PASS - 普通对话：正文留在面板内
+PASS - 普通对话：每行实际字宽不超正文区
+PASS - 普通对话：面板留在640×360视口
+PASS - 普通对话：正文留在面板内
+PASS - 普通对话：每行实际字宽不超正文区
+PASS - 普通对话：面板留在640×360视口
+PASS - 普通对话：正文留在面板内
+PASS - 普通对话：每行实际字宽不超正文区
+PASS - 长对话：真实E可逐页读完
+PASS - 长对话：翻页完整保留中文、英文、编号与标点
+PASS - 剧情对话：面板留在640×360视口
+PASS - 剧情对话：正文留在面板内
+PASS - 剧情对话：每行实际字宽不超正文区
+PASS - 长剧情：中途翻页不提前解锁后续
+PASS - 剧情对话：面板留在640×360视口
+PASS - 剧情对话：正文留在面板内
+PASS - 剧情对话：每行实际字宽不超正文区
+PASS - 长剧情：中途翻页不提前解锁后续
+PASS - 剧情对话：面板留在640×360视口
+PASS - 剧情对话：正文留在面板内
+PASS - 剧情对话：每行实际字宽不超正文区
+PASS - 长剧情：中途翻页不提前解锁后续
+PASS - 剧情对话：面板留在640×360视口
+PASS - 剧情对话：正文留在面板内
+PASS - 剧情对话：每行实际字宽不超正文区
+PASS - 长剧情：中途翻页不提前解锁后续
+PASS - 剧情对话：面板留在640×360视口
+PASS - 剧情对话：正文留在面板内
+PASS - 剧情对话：每行实际字宽不超正文区
+PASS - 长剧情：中途翻页不提前解锁后续
+PASS - 剧情对话：面板留在640×360视口
+PASS - 剧情对话：正文留在面板内
+PASS - 剧情对话：每行实际字宽不超正文区
+PASS - 长剧情：中途翻页不提前解锁后续
+PASS - 展签卡：面板留在640×360视口
+PASS - 展签卡：正文留在面板内
+PASS - 展签卡：每行实际字宽不超正文区
+PASS - 长剧情：中途翻页不提前解锁后续
+PASS - 展签卡：面板留在640×360视口
+PASS - 展签卡：正文留在面板内
+PASS - 展签卡：每行实际字宽不超正文区
+PASS - 长剧情：中途翻页不提前解锁后续
+PASS - 展签卡：面板留在640×360视口
+PASS - 展签卡：正文留在面板内
+PASS - 展签卡：每行实际字宽不超正文区
+PASS - 长剧情：中途翻页不提前解锁后续
+PASS - 展签卡：面板留在640×360视口
+PASS - 展签卡：正文留在面板内
+PASS - 展签卡：每行实际字宽不超正文区
+PASS - 长剧情：中途翻页不提前解锁后续
+PASS - 展签卡：面板留在640×360视口
+PASS - 展签卡：正文留在面板内
+PASS - 展签卡：每行实际字宽不超正文区
+PASS - 长剧情：中途翻页不提前解锁后续
+PASS - 展签卡：面板留在640×360视口
+PASS - 展签卡：正文留在面板内
+PASS - 展签卡：每行实际字宽不超正文区
+PASS - 长剧情：中途翻页不提前解锁后续
+PASS - 长剧情：所有正文读完才执行后续旗标
+PASS - 长选项：换行后仍在视口内
+PASS - 长剧情：真实E完成分页及选项，回调仅一次
+PASS - 剧情分页：完整保留正文
+PASS - 展签分页：完整保留正文
+PASS - B 打开背包
+PASS - 背包打开后：覆盖层与暂停状态一致（open=true paused=true）
+PASS - 再按 B 关闭背包
+PASS - 背包关闭后不自己重开
+PASS - 背包关闭后：覆盖层与暂停状态一致（open=false paused=false）
+PASS - P 打开手机
+PASS - 手机打开后：覆盖层与暂停状态一致（open=true paused=true）
+PASS - 再按 P 关闭手机
+PASS - 手机关闭后：覆盖层与暂停状态一致（open=false paused=false）
+PASS - ESC 用例：背包已打开
+PASS - ESC 关闭背包
+PASS - ESC 关背包后：覆盖层与暂停状态一致（open=false paused=false）
+PASS - ESC 用例：手机已打开
+PASS - ESC 关闭手机
+PASS - ESC 关手机后：覆盖层与暂停状态一致（open=false paused=false）
+PASS - 冷却结束后可再次打开背包
+PASS - 再次关闭背包
+PASS - 重开用例清理后：覆盖层与暂停状态一致（open=false paused=false）
+PASS - 交叉键：背包已打开
+PASS - 背包开着时 P 不应打开手机
+PASS - 背包不受 P 影响
+PASS - 交叉键后背包仍可正常关闭
+PASS - 交叉键（背包）清理后：覆盖层与暂停状态一致（open=false paused=false）
+PASS - 交叉键：手机已打开
+PASS - 手机开着时 B 不应打开背包
+PASS - B 关闭手机
+PASS - 交叉键（B 关手机）清理后：覆盖层与暂停状态一致（open=false paused=false）
+PASS - 交叉键（手机）清理后：覆盖层与暂停状态一致（open=false paused=false）
+PASS - 卡片用例：手机已打开
+PASS - 展签卡弹层已激活
+PASS - 展签卡打开后：覆盖层与暂停状态一致（open=true paused=true）
+PASS - 按 P 应关闭最上层的展签卡
+PASS - 关闭卡片后手机仍在（逐层返回）
+PASS - 关闭展签卡后：覆盖层与暂停状态一致（open=true paused=true）
+PASS - 再按 P 关闭手机
+PASS - 卡片用例清理后：覆盖层与暂停状态一致（open=false paused=false）
+PASS - ESC 卡片用例：手机已打开
+PASS - 第二张展签卡已弹出
+PASS - ESC 关闭展签卡
+PASS - ESC 关卡片后手机仍在（逐层返回）
+PASS - ESC 卡片用例收尾：关闭手机
+PASS - ESC 卡片用例清理后：覆盖层与暂停状态一致（open=false paused=false）
+PASS - HUD 用例：背包已打开
+PASS - 背包开着时点击 HUD 手机按钮不应打开手机
+PASS - 背包不受 HUD 点击影响
+PASS - HUD 场景后背包仍可关闭
+PASS - HUD 场景后手机可正常开关
+PASS - HUD 用例清理后：覆盖层与暂停状态一致（open=false paused=false）
+PASS - 冻结回归：真实关卡存在
+PASS - 规划测试旁边确实有可拾取物
+PASS - 冻结回归：真实Tab开启规划
+PASS - 规划中WASD/方向键不能改变真实玩家位置
+PASS - 规划中真实巡逻守卫位置不变
+PASS - 规划中世界计时不推进
+PASS - 规划中致盲与发现计时均冻结
+PASS - 规划不重置巡逻节点
+PASS - 规划中E不拾取且Q不消耗烟雾弹
+PASS - 规划中可以打开暂停的手机覆盖层
+PASS - 关闭手机仍留在冻结规划态
+PASS - 关闭覆盖层不会单独恢复守卫
+PASS - 冻结回归：空格进入执行态
+PASS - 执行恢复玩家实际移动
+PASS - 执行同时恢复真实守卫巡逻
+PASS - 执行恢复世界计时
+PASS - 方向键真正接管，不被物理帧重新启动路线
+PASS - 接管后守卫仍继续实际巡逻
+PASS - E键也能真正接管执行
+PASS - E键接管不会遗留守卫冻结
+PASS - 路线自然走完进入手动状态
+PASS - 路线完成后人物与守卫都正常运行
+PASS - 反复切换规划第1次后守卫仍移动
+PASS - 反复切换规划第2次后守卫仍移动
+PASS - 反复切换规划第3次后守卫仍移动
+PASS - 接管后的守卫视野能真实触发发现回放
+PASS - 实际发现准确记录守卫与原因
+PASS - 真实发现后可按空格重试规划
+PASS - 重试后退出规划恢复玩家控制
+PASS - 失败重试不会遗留守卫永久冻结
+PASS - 路线预演：当前处于关卡内
+PASS - Tab 进入规划模式
+PASS - 规划模式下守卫世界更新冻结
+PASS - 左键点击添加规划节点
+PASS - 节点落在点击位置附近（世界坐标）
+PASS - 节点动作循环：等待（实际 wait）
+PASS - 节点动作循环：蹲下（实际 crouch）
+PASS - 节点动作循环：疾跑（实际 sprint）
+PASS - 节点动作循环：空（实际 ）
+PASS - Enter 预演激活
+PASS - 预演生成玩家轨迹（8 tick）
+PASS - 预演生成守卫残影（8 tick）
+PASS - 预演预警与一致性内核首次发现 tick 一致
+PASS - 再按 Tab 退出规划模式
+PASS - 退出规划模式后守卫世界更新恢复
+PASS - 规划退出保留测试原有的独立AI禁用，不擅自覆盖
+PASS - 空格执行规划路线
+PASS - 执行后玩家沿路径移动
+PASS - 按方向键接管并中断执行
+PASS - 接管后玩家不再自动移动
+PASS - 进入失败回放态
+PASS - 失败原因被记录
+PASS - 0.6s 定格内空格不误触回退
+PASS - 定格结束后空格回退清除失败回放
+PASS - 回退后自动进入规划模式
+PASS - 回退后保留原规划路线与节点动作
+PASS - 结束时没有残留覆盖层
+PASS - 结束时游戏未处于暂停
+PASS - 互动特写层已打开
+PASS - 互动特写层打开后：覆盖层与暂停状态一致（open=true paused=true）
+PASS - E 关闭特写层（拾取/离开）
+PASS - 互动特写层关闭后：覆盖层与暂停状态一致（open=false paused=false）
+PASS - 互动特写层再次打开
+PASS - ESC 关闭特写层
+PASS - ESC 关闭特写层后：覆盖层与暂停状态一致（open=false paused=false）
+PASS - 标题界面已打开
+PASS - 标题界面有「声明与说明」按钮
+PASS - 点击按钮打开声明页
+PASS - ESC 关闭声明页
+PASS - 标题界面已打开（收集册测试）
+PASS - 标题界面有集中菜单的「文物档案」按钮
+PASS - 点击「文物档案」打开收集册
+PASS - ESC 关闭收集册
+PASS - 新游戏先播q6图片分镜
+PASS - 六格每格5秒，自动总长30秒
+PASS - 开场从第一格开始
+PASS - 真实Space推进一格
+PASS - 手动推进后重新开始5秒计时
+PASS - 按住Space的重复事件不会连续跳格
+PASS - 达到5秒自动切换下一格
+PASS - 真实鼠标点击画面推进一格
+PASS - E兼容推进一格
+PASS - CG期间B不打开背包干扰播放
+PASS - 真实Skip只发出一次结束信号
+PASS - 跳过演出后契约进度落档
+PASS - Skip直接进入教学而非栏目页
+PASS - 最后一格自动结束也落档
+PASS - 自动播完直接进入教学
+PASS - P2-B：城西教学关已进入
+PASS - P2-B：目标入包
+PASS - P2-B：城西成功撤离不弹独立结算页
+PASS - P2-B：直接进入安全屋
+PASS - P2-B：安全屋有可操控角色
+PASS - P2-B：进安全屋播 P-01
+PASS - P2-B：P-01 落档
+PASS - 碰撞回归：安全屋已打开
+PASS - 碰撞：持续向上走被顶墙挡住（y=19.0）
+PASS - 碰撞：书桌电脑挡住玩家（y=47.0）
+PASS - 碰撞：走动不误开设备界面
+PASS - 电脑：走近按 E 打开书桌电脑
+PASS - 电脑：覆盖层与暂停状态一致（open=true paused=true）
+PASS - 电脑：ESC 关闭电脑
+PASS - 电脑关闭：覆盖层与暂停状态一致（open=false paused=false）
+PASS - 文物箱：走近按 E 打开箱界面
+PASS - 文物箱：覆盖层与暂停状态一致（open=true paused=true）
+PASS - 文物箱：开着时 P 不打开手机
+PASS - 文物箱：P 不关闭箱界面
+PASS - 文物箱：B 关闭箱界面
+PASS - 文物箱关闭：覆盖层与暂停状态一致（open=false paused=false）
+PASS - 房门：门前识别到房门交互点
+PASS - 房门：未确认行动时 E 不切场景
+PASS - 房门：未确认行动时提示先用手机确认
+PASS - 手机：安全屋打开应用首页
+PASS - 手机：委托页列出可行动关卡
+PASS - 手机：委托页有「准备出发」按钮
+PASS - 手机：准备出发落档（实际 british_museum）
+PASS - 手机：确认后关闭手机仍留在房间
+PASS - 手机关闭：覆盖层与暂停状态一致（open=false paused=false）
+PASS - HUD：确认后行动栏显示已确认（实际 任务目标：已确认：大英博物馆）
+PASS - 房门：已确认行动后 E 出发进入关卡
+PASS - 房门：出发进入委托确认的关卡（实际 british_museum）
+PASS - 房门：出发后准备状态被消费
+PASS - 房门：出发后离开安全屋场景
+PASS - 文物箱：安全屋已打开
+PASS - 文物箱：走近按 E 打开箱界面
+PASS - 文物箱：箱内列出两件战利品
+PASS - 文物箱：战利品行有卖出按钮
+PASS - 点击卖出获得对应金币
+PASS - 卖出的物品移出箱内
+PASS - 文物箱：ESC 关闭箱界面
+PASS - 手机：箱界面关闭后可打开应用首页
+PASS - 手机：交易页打开
+PASS - 手机：交易页列出剩余 1 件战利品（标题+行+说明，实际 3）
+PASS - 手机：交易页关闭
+PASS - 交易页关闭：覆盖层与暂停状态一致（open=false paused=false）
+PASS - 文物箱：重新打开箱界面
+PASS - 剩余战利品卖出后箱内清空
+PASS - 全部出手结清剩余金币
+PASS - 文物箱：收尾关闭箱界面
+PASS - 转移：箱界面打开
+PASS - 转移：箱内行有取出按钮
+PASS - 转移：取出后随身 1 件
+PASS - 转移：取出后箱内清空
+PASS - 转移：取出的是青瓷花瓶
+PASS - 转移：随身行有存入按钮
+PASS - 转移：存回后随身清空、箱内 1 件
+PASS - 转移：关闭箱界面
+PASS - 预约：打开手机
+PASS - 预约：交易页有「预约一件」按钮
+PASS - 预约：loot_reserved 落档（不扣货不发钱）
+PASS - 预约：不付款
+PASS - 预约：货物仍在箱内
+PASS - 预约：关闭手机
+PASS - 预约：打开文物箱取预约货
+PASS - 预约：箱内行标记已预约
+PASS - 预约：取出的货物带预约标记
+PASS - 预约：取出后箱内计数释放
+PASS - 预约：关闭箱界面
+PASS - 交货：门口 E 打开交货确认面板
+PASS - 交货面板：覆盖层与暂停状态一致（open=true paused=true）
+PASS - 交货：面板列出随身预约货
+PASS - 交货：取消不收钱、货仍在身上
+PASS - 交货：再次打开确认面板
+PASS - 交货：确认后一次性收 120 金（实际 120）
+PASS - 交货：随身预约货移除
+PASS - 交货：预约计数清空
+PASS - 交货：结算后面板关闭
+PASS - 交货结算：覆盖层与暂停状态一致（open=false paused=false）
+PASS - 门禁：打开箱取出未预约货
+PASS - 门禁：随身 1 件未存箱货
+PASS - 门禁：背包有货时门口 E 不出发
+PASS - 门禁：给出先存箱/交货提示
+PASS - 推理门禁：未推理不能直接准备第二关
+PASS - 电脑调查：走近按 E 打开书桌电脑
+PASS - 推理引导：没拿档案时给出可搜索的编号
+PASS - 中文输入：真实Unicode按键写入搜索框
+PASS - 中文输入：WSL拼音辅助空格提交汉字
+PASS - 电脑调查：浏览器有搜索按钮
+PASS - 电脑调查：搜索关键词解锁技术研究
+PASS - 电脑调查：编号检索解锁馆藏档案
+PASS - 电脑调查：聊天有发送按钮
+PASS - 电脑调查：聊天触发阿岚邮件
+PASS - 电脑调查：聊天不赠送现场便条
+PASS - 电脑调查：聊天触发圣甲虫布展邮件
+PASS - 电脑调查：聊天触发注壶布展邮件
+PASS - 电脑调查：另两线现场便条也不由聊天赠送
+PASS - 电脑调查：推理板组件已挂载
+PASS - 电脑调查：推理板显示已获得材料
+PASS - 推理板：实际电脑内不越出360高窗口
+PASS - 推理引导：明确指出先拖哪份材料到哪里
+PASS - 推理引导：第一份连好后提示另一份材料
+PASS - 推理引导：材料齐备后要求玩家点选结论
+PASS - 推理板：真实电脑内拖线并确认特点
+PASS - 推理引导：确认外貌后带到展区步骤
+PASS - 推理门禁：只确认特点仍不能出发
+PASS - 推理板：真实滚动并拖入布展邮件
+PASS - 推理板：特点和展区均由玩家完成
+PASS - 推理引导：完成后明确手机与房门操作
+PASS - 推理门禁：单条线完成允许手机准备
+PASS - 电脑调查：ESC 关闭电脑
+PASS - 采购：安全屋已打开
+PASS - 采购：打开手机
+PASS - 采购：采购页打开
+PASS - 采购：显示金币（实际 金币 300）
+PASS - 采购：烟雾弹可购买（有钱）
+PASS - 采购：购买一次扣款一次发货（120 金，实际 180）
+PASS - 采购：刷新后仍有购买按钮
+PASS - 采购：第二次购买独立扣款（实际 60）
+PASS - 采购：钱不够时购买按钮禁用
+PASS - 采购：关闭手机
+PASS - 采购页关闭：覆盖层与暂停状态一致（open=false paused=false）
+PASS - 装载：先关闭手机
+PASS - 装载：共 4 颗备货（2+2，实际 4）
+PASS - 装载：打开手机
+PASS - 装载：采购页打开
+PASS - 装载：找到装载计划行
+PASS - 装载：− 使计划 4→3（实际 3）
+PASS - 装载：选 0 落档（实际 0）
+PASS - 装载：计划 0 时 − 禁用
+PASS - 装载：读档保留计划 0
+PASS - 装载：读档后 + 使计划 0→1
+PASS - 装载：读档后再选 2（实际 2）
+PASS - 装载：关闭手机
+PASS - 装载计划关闭：覆盖层与暂停状态一致（open=false paused=false）
+PASS - 采购：出发进入关卡
+PASS - 采购：出发装载 按计划携带2/备货余2（实际 2/2）
+PASS - 采购：HUD 烟雾弹计数显示携带数（实际 烟雾弹 x2（Q 使用））
+PASS - 电话页脚：关卡已开始
+PASS - 电话页脚：手机已打开
+PASS - A-00：档案页显示关闭提示（P/B/ESC）
+PASS - A-00：任务页显示关闭提示
+PASS - 安全屋手机：安全屋已打开
+PASS - 安全屋手机：按 P 打开手机
+PASS - 安全屋手机：打开手机暂停世界（覆盖层契约）
+PASS - 安全屋手机：打开显示应用首页（不复刻旧栏目）
+PASS - 安全屋手机：隐藏档案标签
+PASS - 安全屋手机：隐藏档案页
+PASS - 安全屋手机：首页有委托/交易应用入口
+PASS - 安全屋手机：手机开着时玩家不能移动
+PASS - 安全屋手机：再按 P 关闭手机
+PASS - 安全屋手机关闭：覆盖层与暂停状态一致（open=false paused=false）
+PASS - 真实按键从安全屋打开手机
+PASS - 真实鼠标打开日历
+PASS - 真实鼠标返回应用首页
+PASS - 通讯录：存在联系人 阿岚
+PASS - 通讯录：姓名与身份一致 阿岚
+PASS - 通讯录：阿岚介绍不会串到 阿岚
+PASS - 通讯录：保存对应联系人记录 阿岚
+PASS - 通讯录：存在联系人 恶魔
+PASS - 通讯录：姓名与身份一致 恶魔
+PASS - 通讯录：阿岚介绍不会串到 恶魔
+PASS - 通讯录：保存对应联系人记录 恶魔
+PASS - 通讯录：存在联系人 老猫
+PASS - 通讯录：姓名与身份一致 老猫
+PASS - 通讯录：阿岚介绍不会串到 老猫
+PASS - 通讯录：保存对应联系人记录 老猫
+PASS - 通讯录：存在联系人 中国追索者
+PASS - 通讯录：姓名与身份一致 中国追索者
+PASS - 通讯录：阿岚介绍不会串到 中国追索者
+PASS - 通讯录：保存对应联系人记录 中国追索者
+PASS - 通讯录：存在联系人 埃及裔学者
+PASS - 通讯录：姓名与身份一致 埃及裔学者
+PASS - 通讯录：阿岚介绍不会串到 埃及裔学者
+PASS - 通讯录：保存对应联系人记录 埃及裔学者
+PASS - 通讯录：存在联系人 希腊文化基金会
+PASS - 通讯录：姓名与身份一致 希腊文化基金会
+PASS - 通讯录：阿岚介绍不会串到 希腊文化基金会
+PASS - 通讯录：保存对应联系人记录 希腊文化基金会
+PASS - 通讯录：存在联系人 阿岚
+PASS - 通讯录：姓名与身份一致 阿岚
+PASS - 通讯录：阿岚介绍不会串到 阿岚
+PASS - 通讯录：保存对应联系人记录 阿岚
+PASS - 通讯录：六名联系人内容各不相同
+PASS - 鼠标打开推理板
+PASS - 真实鼠标拖动卡片
+PASS - 真实拖线记录玩家指定关系
+PASS - 拖一条线不会自动补全其他关联
+PASS - P-01：教学关后首次回安全屋播放剧情
+PASS - P-01：saw_p01 落档
+PASS - P-01：剧情结束后关闭
+PASS - P-01：剧情结束后回到安全屋
+PASS - 旧档补播：首次回安全屋播放直白调查说明
+PASS - 旧档补播：新版调查说明落档
+PASS - H-01：剧情结束后关闭
+PASS - H-02：大英任务前播放两个地址
+PASS - H-02：saw_h02 落档
+PASS - H-02：剧情结束后进入 briefing
+PASS - P6：解锁后可切换埃及目标
+PASS - P6：大英关卡已进入
+PASS - P6：Museum.target_item_id 跟随所选目标（实际 egypt_heart_scarab）
+PASS - P6：埃及目标实际生成
+PASS - 埃及目标在独立展厅
+PASS - 展签卡不显示未解锁：商代双羊尊 · 形制与年代
+PASS - 展签卡不显示未解锁：南方青铜 · 湖南推定
+PASS - 展签卡不显示未解锁：1936 · 一次有记录的转手
+PASS - 双羊尊 3 张展签卡全部可读（实际 3）
+PASS - BM 剧情：关卡已开始
+PASS - P0-1：双羊尊旁提示为拾取/端详（当前：按 E 拾取：商代双羊尊）
+PASS - P0-1：未读标签时按 E 不开剧情对谈
+PASS - P0-1：未读标签时按 E 打开特写或已拾取
+PASS - P0-1：特写内再按 E 真正拾取双羊尊
+PASS - BM 剧情：标签关卡已开始
+PASS - 标签旁提示：显示「按 E 阅读：馆方标签」（当前：按 E 阅读：馆方标签）
+PASS - 只读标签：按 E 打开剧情对谈
+PASS - 只读标签：read_label = true
+PASS - 只读标签：read_note = false
+PASS - 只读标签：结束后不卡界面/暂停
+PASS - BM 剧情：留言关卡已开始
+PASS - 只读留言：按 E 打开剧情对谈
+PASS - 只读留言：read_note = true
+PASS - 只读留言：read_label = false
+PASS - 只读留言：结束后不卡界面/暂停
+PASS - 两张都读：留言对谈已打开
+PASS - 两张都读：补充身份与本次通路说明
+PASS - 现场便条：实际阅读记入推理材料
+PASS - 两张都读：两个 flag 均落档
+PASS - 两张都读：结束后不卡界面/暂停
+PASS - P0-1：读完两张后按 E 不开剧情对谈
+PASS - P0-1：读完两张后按 E 仍可拾取/特写
+PASS - 重复阅读：可正常关闭、不软锁
+PASS - 都不读：flag 保持 false
+PASS - 都不读：没有自动弹出对谈
+ALL 448 CHECKS PASSED
+
+==> 存档兼容自检（老档 / 脏档 / 未来档）
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: Parse JSON failed. Error at line 0: Expected key
+   at: parse_string (core/io/json.cpp:629)
+   GDScript backtrace (most recent call first):
+       [0] _read_save_dict (res://src/autoload/game_state.gd:912)
+       [1] load_game (res://src/autoload/game_state.gd:989)
+       [2] _test_corrupt_json (res://tests/test_save_compat.gd:99)
+       [3] _initialize (res://tests/test_save_compat.gd:28)
+ALL 135 CHECKS PASSED
+
+==> 玩家进度自检（结算 / 仓库 / 收集册 / 存档健壮性）
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: Parse JSON failed. Error at line 0: Expected ']'
+   at: parse_string (core/io/json.cpp:629)
+   GDScript backtrace (most recent call first):
+       [0] _read_save_dict (res://src/autoload/game_state.gd:912)
+       [1] has_save (res://src/autoload/game_state.gd:420)
+       [2] _test_save_robustness (res://tests/test_progression.gd:480)
+       [3] _initialize (res://tests/test_progression.gd:31)
+ERROR: Parse JSON failed. Error at line 0: Expected ']'
+   at: parse_string (core/io/json.cpp:629)
+   GDScript backtrace (most recent call first):
+       [0] _read_save_dict (res://src/autoload/game_state.gd:912)
+       [1] load_game (res://src/autoload/game_state.gd:989)
+       [2] _reload (res://tests/test_progression.gd:343)
+       [3] _test_save_robustness (res://tests/test_progression.gd:481)
+       [4] _initialize (res://tests/test_progression.gd:31)
+ALL 131 CHECKS PASSED
+
+==> 剧情自检（story_flags / 双羊尊文物志）
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ALL 30 CHECKS PASSED
+
+==> 确定性预演自检（R-02 灰盒一致性）
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS - 预演与执行 tick 数一致（20 vs 20）
+PASS - 逐 tick 状态摘要完全一致
+PASS - 事件序列一致
+PASS - 首次发现 tick 一致（20 vs 20）
+PASS - 风险路线确实触发了发现（灰盒有效性）
+PASS - 重复执行事件一致（帧率无关）
+PASS - 修改路线后预演/执行仍一致
+PASS - 预演不污染源快照（整份深比较）
+PASS - 失败场景触发发现
+PASS - 恢复快照逐字段一致
+PASS - 失败恢复后重跑同路线仍逐 tick 一致
+PASS - 噪音触发守卫调查事件
+PASS - 守卫朝噪音源移动
+PASS - 站立距离 4 被发现
+PASS - 蹲下距离 4 未被发现
+PASS - 开锁动作 40 tick 后门解锁
+PASS - 拿取动作 20 tick 后目标入包
+PASS - 执行也不污染源快照（整份深比较）
+PASS - batch=1 逐 tick 轨迹与执行一致
+PASS - batch=3 逐 tick 轨迹与执行一致
+PASS - batch=7 逐 tick 轨迹与执行一致
+PASS - batch=20 逐 tick 轨迹与执行一致
+PASS - 多噪音并发两次预演逐 tick 一致
+PASS - 多噪音并发事件序列一致
+PASS - 多噪音触发调查
+PASS - 最近噪音 (5,5) 优先（实际 (5, 5)）
+PASS - 长路线产生了足够 tick（456）
+PASS - 长路线两次预演逐 tick 一致
+PASS - 长路线事件序列一致
+PASS - restore_full 完整还原（含 tick/守卫等待/监控相位/噪音）
+PASS - 非门口执行 unlock 不应开门
+PASS - 门口门锁保持锁定
+PASS - 噪音调查结束后守卫回到巡逻态（实际 alert=0）
+PASS - TICK_RATE 固定 20
+PASS - sim_preview.gd 不调用随机数
+PASS - 多守卫/监控场景触发发现
+PASS - 监控摄像头也被纳入发现归因
+PASS - 墙体遮挡时不应发现玩家
+PASS - 隔壁厅半径内的噪音不触发调查
+PASS - 跨房间噪音不生成调查事件
+PASS - 多个噪音只选择合法同厅来源
+PASS - 无房间上下文的单房灰盒仍响应半径噪音
+PASS - 路线完成即停止预演，不追加98个等待tick
+PASS - 路线终点快照与实际执行终点一致
+PASS - 空路线不凭空推进世界
+PASS - max_ticks是本次步数预算，支持非零起点
+PASS - 完整摘要区分玩家move_counter
+PASS - 完整摘要区分玩家take_progress
+PASS - 完整摘要区分玩家unlock_progress
+PASS - 完整摘要区分守卫移动计时
+PASS - 完整摘要区分携带消耗品
+PASS - 可选记录包含每个权威tick
+PASS - 逐tick记录保存当时的动作进度
+PASS - 逐tick记录包含完成游标
+PASS - 历史记录不被后续快照修改污染
+PASS - 普通预演不额外保存完整逐tick副本
+ALL 56 CHECKS PASSED
+
+==> 真实场景等价自检（R-02b 预览 vs 执行）
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS - 安全路线：预演未发现
+PASS - 安全路线：执行至少推进 2 tick（实际 8）
+PASS - 安全路线：预演与执行完整 step 一致
+PASS - 守卫视野：预演触发发现（tick 16）
+PASS - 守卫视野：触发实体归因是 guard
+PASS - 守卫视野：执行恰在发现 tick 停止（16 == 16）
+PASS - 守卫视野：直到发现 tick 完整 step 一致
+PASS - 守卫视野：执行也触发 spotted 事件
+PASS - 守卫视野：执行发现 tick 与预演相同
+PASS - 守卫视野：执行发现归因是 guard
+PASS - 墙体遮挡：预演未触发发现
+PASS - 墙体遮挡：执行推进了至少 1 tick
+PASS - 墙体遮挡：预演与执行完整 step 一致
+PASS - 墙体遮挡：执行也未触发 spotted
+PASS - 监控摄像头：预演触发发现
+PASS - 监控摄像头：触发实体归因是 camera
+PASS - 监控摄像头：执行恰在发现 tick 停止（1 == 1）
+PASS - 监控摄像头：直到发现 tick 完整 step 一致
+PASS - 监控摄像头：执行也触发 spotted
+PASS - 监控摄像头：执行发现 tick 与预演相同
+PASS - 监控摄像头：执行发现归因是 camera
+PASS - 噪音调查：预演触发守卫调查事件
+PASS - 噪音调查：执行与预演调查事件数相同（3 == 3）
+PASS - 噪音调查：第 0 个调查事件 tick 一致
+PASS - 噪音调查：第 0 个调查事件守卫 id 一致
+PASS - 噪音调查：第 1 个调查事件 tick 一致
+PASS - 噪音调查：第 1 个调查事件守卫 id 一致
+PASS - 噪音调查：第 2 个调查事件 tick 一致
+PASS - 噪音调查：第 2 个调查事件守卫 id 一致
+PASS - 拿取动作：预演触发 target_taken 事件
+PASS - 拿取动作：预演拿取目标是 mask
+PASS - 拿取动作：执行触发 target_taken 事件
+PASS - 拿取动作：执行拿取 tick 与预演相同
+PASS - 拿取动作：执行拿取目标是 mask
+PASS - 拿取动作：执行后 mask 实际入包
+PASS - 拿取动作：场景中 mask 文物已移除
+PASS - 拿取动作：预演与执行完整 step 一致
+PASS - 完整状态：执行自然结束（未被 max_ticks 截断）
+PASS - 完整状态：step 数一致（P=28 E=28）
+PASS - 完整状态：全部快照字段逐 tick 一致
+PASS - 完整快照：玩家位置恢复
+PASS - 完整快照：守卫位置恢复
+PASS - 完整快照：目标文物重新出现
+PASS - 完整快照：背包被清空回起始状态
+PASS - 完整快照：烟雾弹数量恢复
+PASS - 完整快照：烟雾 puff 恢复
+PASS - 预演墙阻挡：找到玩家旁的实心格
+PASS - 预演墙阻挡：实际 run_preview 生成轨迹
+PASS - 预演墙阻挡：轨迹不穿实心格
+PASS - 预演墙阻挡：真实执行也不穿实心格
+PASS - 预演墙阻挡：预演覆盖已执行的全部 tick（900 >= 6）
+PASS - 预演墙阻挡：实际预演与执行前 6 tick 位置一致
+PASS - G05：结束/接管后保留重试快照
+PASS - G05：玩家回退到精确坐标（实际 (57.25, 41.75)）
+PASS - G05：守卫 _spot_timer 精确恢复（实际 0.350）
+PASS - G05：守卫 _wait_timer 精确恢复（实际 0.450）
+PASS - 全快照：包含全部 7 名守卫
+PASS - 全快照：包含全部 2 个摄像头
+PASS - 全快照：装饰时间恢复（实际 1.250）
+PASS - 全快照：全部守卫位置/朝向/计时/巡逻进度/AI 状态恢复
+PASS - 全快照：全部摄像头相位随装饰时间恢复
+PASS - 多守卫：预演触发发现
+PASS - 多守卫：执行触发发现
+PASS - 多守卫：首次发现 tick 一致
+PASS - 多守卫：首次发现实体 id 一致
+PASS - 多守卫：执行恰在发现 tick 停止（16 == 16）
+PASS - 多守卫：直到发现 tick 完整 step 一致
+PASS - 双摄像头：预演触发发现
+PASS - 双摄像头：执行触发发现
+PASS - 双摄像头：归因为 camera
+PASS - 双摄像头：首次发现实体 id 一致
+PASS - 双摄像头：首次发现 tick 一致
+PASS - 双摄像头：执行恰在发现 tick 停止（1 == 1）
+PASS - 双摄像头：直到发现 tick 完整 step 一致
+PASS - 接管：预演已激活
+PASS - 接管：取消执行
+PASS - 接管：旧预演轨迹清空
+PASS - 接管：保留重试快照
+PASS - 接管：守卫 AI 恢复
+PASS - 接管：新规划生成预演
+PASS - 接管：新预演从新位置开始（首格 (9, 6)）
+PASS - 帧率：物理 30/60/120 + 渲染 30fps 共四次执行
+PASS - 帧率：30/60/120 逐 tick 轨迹一致
+PASS - 帧率：30/60/120 事件一致
+PASS - 帧率：30/60/120 完整 step/路线进度一致
+PASS - 帧率：渲染 max_fps=30 不改变逐 tick 轨迹
+PASS - 帧率：渲染 max_fps=30 不改变事件
+ALL 87 CHECKS PASSED
+
+==> 完整回退与人工接管自检
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ALL 25 CHECKS PASSED
+
+==> 路线动作入口自检（真实鼠标）
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS - 真实点击添加已知地面路点
+PASS - 原地无动作路线保留规划，不能凭空推进模拟
+PASS - 无效空路线不创建执行快照
+PASS - 点击路点选择等待
+PASS - 再次点击选择蹲行
+PASS - 普通地面跳过不适用开锁与拿取，能够选择疾跑
+PASS - 疾跑后可返回普通移动
+PASS - 夹具存在任务物品
+PASS - 目标格跳过无效开锁后能够选择拿取
+PASS - 真实输入的拿取动作进入执行时间轴
+PASS - 目标格拿取后仍能选择疾跑
+PASS - 第二轮循环仍能选择拿取
+PASS - 真实空格启动路线执行
+PASS - 真实空格执行拿取后目标实际入包
+ALL 14 CHECKS PASSED
+
+==> 探索循环自检（迷雾 / 侦察撤离 / 跨次保留）
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS - 迷雾：玩家起始分区有效
+PASS - 迷雾：入口分区已揭示
+PASS - 迷雾：入口分区已写入跨次记录
+PASS - 迷雾：至少有一个其他房间初始隐藏
+PASS - 跨次保留：第二个房间分区索引一致
+PASS - 跨次保留：第二个房间已揭示
+PASS - 跨次保留：第二个房间已写入记录
+PASS - 跨次保留：重进后入口仍揭示
+PASS - 跨次保留：重进后第二个房间仍揭示
+PASS - 跨次保留：未进入的房间仍隐藏
+PASS - 侦察撤离：场景中存在普通战利品
+PASS - 侦察撤离：普通战利品有实例ID
+PASS - 侦察撤离：战利品拾取成功
+PASS - 侦察撤离：战利品在背包中
+PASS - 侦察撤离：背包条目保留实例ID
+PASS - 侦察撤离：结算标记 recon
+PASS - 侦察撤离：背包已清空
+PASS - 侦察撤离：战利品进入 stash
+PASS - 侦察撤离：未发放任务报酬
+PASS - 侦察撤离：实例ID已记录
+PASS - 侦察撤离后：已探房间保留
+PASS - 侦察撤离后：第二个房间记录保留
+PASS - 侦察撤离后：已带出实例不再刷新
+PASS - 新游戏：已探房间清空
+PASS - 新游戏：已取实例清空
+PASS - 小地图：至少显示入口房间
+PASS - 小地图：入口房间可见
+PASS - 小地图：初始不泄露其他房间（实际 1）
+PASS - 小地图：未探出口不显示
+PASS - 小地图：未探目标房不显示
+PASS - 小地图：踏入后显示该房间
+PASS - 小地图：只增加已踏房间（实际 2）
+PASS - 未知区域规划：找到未探可走点
+PASS - 未知区域规划：规划模式已开启
+PASS - 未知区域规划：真实鼠标点击未探区域不得添加节点
+ALL 35 CHECKS PASSED
+
+==> 安全屋经济闭环（真实键鼠全链）
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ALL 33 CHECKS PASSED
+
+==> 推理板自检（真实拖卡 / 连线 / 双材料 / 读档）
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS - 推理板：只显示已获得 5 份双羊尊材料（实际 5）
+PASS - 推理板：馆藏档案卡存在
+PASS - 推理板：技术研究卡存在
+PASS - 推理板：三条线均进入可选目标
+PASS - 调查数据：圣甲虫网页检索唯一
+PASS - 调查数据：圣甲虫编号检索唯一
+PASS - 调查数据：注壶网页检索唯一
+PASS - 调查数据：注壶编号检索唯一
+PASS - 推理板：zun_archive 有事实ID/来源元数据
+PASS - 推理板：zun_tech 有事实ID/来源元数据
+PASS - 推理板：zun_delivery 有事实ID/来源元数据
+PASS - 推理板：zun_service 有事实ID/来源元数据
+PASS - 推理板：拖到中央后档案已连线
+PASS - 推理板：连线后出现关系选项
+PASS - 推理板：存在可选的错误关系
+PASS - 推理板：错误关系给出材料缺口反馈
+PASS - 推理板：错误关系不置通过
+PASS - 推理板：关系选项包含联合结论
+PASS - 推理板：缺技术材料时联合结论不通过
+PASS - 推理板：缺材料给出明确反馈（实际 还缺少另一份材料，先把相关卡片连到中央档案。
+下一步：按住左侧“技术研究摘记”，拖进右上框后松开；然后在下方点选结论。）
+PASS - 推理板：技术卡已连线
+PASS - 推理板：两卡连线后仍有联合结论
+PASS - 推理板：两份材料齐备后联合结论通过
+PASS - 推理板：拖动预览不移动材料栏、不会遮住关系区
+PASS - 推理板：关系区位于板面范围内
+PASS - 推理板：连线写入 story_flags
+PASS - 推理板：读档后连线保留
+PASS - 推理板：读档后卡片位置保留
+PASS - 圣甲虫线：显示 5 份已获得材料
+PASS - 圣甲虫线：联合判断选项存在
+PASS - 圣甲虫线：联合判断通过
+PASS - 圣甲虫线：展区关系可选
+PASS - 圣甲虫线：推理完成自动选择相应行动目标
+PASS - 圣甲虫线：单线完成可准备出发
+PASS - 注壶线：显示 5 份已获得材料
+PASS - 注壶线：联合判断选项存在
+PASS - 注壶线：联合判断通过
+PASS - 注壶线：展区关系可选
+PASS - 注壶线：推理完成自动选择相应行动目标
+PASS - 注壶线：单线完成可准备出发
+
+ALL 40 CHECKS PASSED
+
+==> 剧情验收（独立：隐藏条件 / 双羊全分支播放）
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ALL 30 CHECKS PASSED
+
+==> 推理数据自检（三链 / 线索数据边界 / 恶魔分支）
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ALL 151 CHECKS PASSED
+
+==> 场景实例化自检（src/*.tscn）
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ALL 158 SCENES OK
+
+==> 随机操作自检（monkey，规则不变量）
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+覆盖统计：背包 81 步 / 手机 33 步 / 对话框 204 步 / 对话树 17 步 / 开局 2 次
+ALL 600 步随机操作通过（seed=20261020）
+
+==> 冒烟测试（场景集成）
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ALL 184 CHECKS PASSED
+
+==> 截图（视觉回归素材 · 屏外静默）
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+OpenGL API 4.5 (Core Profile) Mesa 26.0.8-1ubuntu0.3 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 21.1.8, 256 bits)
+
+saved /tmp/shot_title.png
+saved /tmp/shot_statements.png
+saved /tmp/shot_collection.png
+saved /tmp/shot_safehouse.png
+saved /tmp/shot_computer.png
+saved /tmp/shot_computer_board.png
+saved /tmp/shot_board_step2.png
+saved /tmp/shot_board_ready.png
+saved /tmp/shot_contract_intro.png
+saved /tmp/shot_contract_intro_01.png
+saved /tmp/shot_contract_intro_02.png
+saved /tmp/shot_contract_intro_03.png
+saved /tmp/shot_contract_intro_04.png
+saved /tmp/shot_contract_intro_05.png
+saved /tmp/shot_contract_intro_06.png
+saved /tmp/shot_evidence_board.png
+saved /tmp/shot_contacts.png
+saved /tmp/shot_contact_01.png
+saved /tmp/shot_contact_02.png
+saved /tmp/shot_contact_03.png
+saved /tmp/shot_contact_04.png
+saved /tmp/shot_contact_05.png
+saved /tmp/shot_contact_06.png
+saved /tmp/shot_calendar.png
+saved /tmp/shot_long_dialogue.png
+saved /tmp/shot_long_story.png
+saved /tmp/shot_long_card.png
+saved /tmp/shot_long_card_page2.png
+saved /tmp/shot_pack_egypt_heart_scarab.png
+saved /tmp/shot_pack_akrotiri_askos.png
+saved /tmp/shot_dialogue.png
+saved /tmp/shot_room0.png
+saved /tmp/shot_gallery.png
+saved /tmp/shot_alert.png
+saved /tmp/shot_smoke.png
+saved /tmp/shot_planning.png
+saved /tmp/shot_phone.png
+saved /tmp/shot_room3.png
+saved /tmp/shot_inspect.png
+saved /tmp/shot_backpack.png
+saved /tmp/shot_failure_replay.png
+saved /tmp/shot_bm_room0.png
+saved /tmp/shot_bm_room1.png
+saved /tmp/shot_bm_room2.png
+saved /tmp/shot_bm_room3.png
+saved /tmp/shot_bm_room4.png
+saved /tmp/shot_bm_room5.png
+saved /tmp/shot_bm_zun.png
+saved /tmp/shot_bm_closeup.png
+saved /tmp/shot_bm_phone.png
+saved /tmp/shot_bm_backpack.png
+saved /tmp/shot_bm_archive.png
+saved /tmp/shot_bm_label.png
+saved /tmp/shot_bm_note.png
+saved /tmp/shot_bm_both.png
+saved /tmp/shot_box.png
+
+==> 视觉回归（对比 tests/visual_baseline）
+截图                                 差异       阈值  结果
+----------------------------------------------------------
+shot_alert.png                  1.68%    20.0%  ok
+shot_backpack.png               0.00%     2.0%  ok
+shot_bm_archive.png             0.47%     2.0%  ok
+shot_bm_backpack.png            0.03%     2.0%  ok
+shot_bm_both.png                0.08%     2.0%  ok
+shot_bm_closeup.png             0.26%     2.0%  ok
+shot_bm_label.png               0.42%     2.0%  ok
+shot_bm_note.png                0.07%     2.0%  ok
+shot_bm_phone.png               0.00%     2.0%  ok
+shot_bm_room0.png               0.69%     2.0%  ok
+shot_bm_room1.png               0.03%     2.0%  ok
+shot_bm_room2.png               0.03%     2.0%  ok
+shot_bm_room3.png               0.08%     2.0%  ok
+shot_bm_room4.png               0.02%     2.0%  ok
+shot_bm_room5.png               0.01%     2.0%  ok
+shot_bm_zun.png                 0.08%     2.0%  ok
+shot_board_ready.png            0.00%     2.0%  ok
+shot_board_step2.png            0.00%     2.0%  ok
+shot_box.png                    0.00%     2.0%  ok
+shot_calendar.png               0.00%     2.0%  ok
+shot_collection.png             0.00%     2.0%  ok
+shot_computer.png               0.00%     2.0%  ok
+shot_computer_board.png         0.00%     2.0%  ok
+shot_contact_01.png             0.00%     2.0%  ok
+shot_contact_02.png             0.00%     2.0%  ok
+shot_contact_03.png             0.00%     2.0%  ok
+shot_contact_04.png             0.00%     2.0%  ok
+shot_contact_05.png             0.00%     2.0%  ok
+shot_contact_06.png             0.00%     2.0%  ok
+shot_contacts.png               0.00%     2.0%  ok
+shot_contract_intro.png         0.00%     2.0%  ok
+shot_contract_intro_01.png      0.08%     2.0%  ok
+shot_contract_intro_02.png      0.08%     2.0%  ok
+shot_contract_intro_03.png      0.00%     2.0%  ok
+shot_contract_intro_04.png      0.00%     2.0%  ok
+shot_contract_intro_05.png      0.00%     2.0%  ok
+shot_contract_intro_06.png      0.00%     2.0%  ok
+shot_dialogue.png               0.00%     2.0%  ok
+shot_evidence_board.png         1.11%     2.0%  ok
+shot_failure_replay.png         0.62%     5.0%  ok
+shot_gallery.png                0.00%     2.0%  ok
+shot_inspect.png                0.00%     2.0%  ok
+shot_long_card.png              0.00%     2.0%  ok
+shot_long_card_page2.png        0.00%     2.0%  ok
+shot_long_dialogue.png          0.00%     2.0%  ok
+shot_long_story.png             0.00%     2.0%  ok
+shot_pack_akrotiri_askos.png    0.92%     2.0%  ok
+shot_pack_egypt_heart_scarab.png    0.57%     2.0%  ok
+shot_phone.png                  0.97%     2.0%  ok
+shot_planning.png               0.99%     5.0%  ok
+shot_room0.png                  0.69%     2.0%  ok
+shot_room3.png                  0.06%     5.0%  ok
+shot_safehouse.png              0.00%     2.0%  ok
+shot_smoke.png                  0.82%     6.0%  ok
+shot_statements.png             0.00%     2.0%  ok
+shot_title.png                  0.01%     2.0%  ok
+
+视觉回归通过：56 张截图与基线一致（阈值内）。
+
+✅ 全部通过（25 项）

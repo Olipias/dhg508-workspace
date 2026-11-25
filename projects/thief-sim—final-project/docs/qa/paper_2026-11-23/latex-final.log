@@ -1,0 +1,91 @@
+This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex)
+ restricted \write18 enabled.
+entering extended mode
+(./main.tex
+LaTeX2e <2026-06-01>
+L3 programming layer <2026-09-09>
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/base/size11.clo))
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/fontspec/fontspec.sty
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/fontspec/fontspec-xetex.sty
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/base/fontenc.sty)
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/fontspec/fontspec.cfg)))
+(/home/liyutong/texlive/2026/texmf-dist/tex/xelatex/xecjk/xeCJK.sty
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/l3kernel/expl3.sty
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/l3kernel/l3backend-xetex.def)
+) (/home/liyutong/texlive/2026/texmf-dist/tex/latex/ctex/ctexhook.sty)
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/ctex/ctexpatch.sty)
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/l3packages/xtemplate/xtemplat
+e.sty) (/home/liyutong/texlive/2026/texmf-dist/tex/xelatex/xecjk/xeCJK.cfg))
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/geometry/geometry.sty
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/graphics/keyval.sty)
+(/home/liyutong/texlive/2026/texmf-dist/tex/generic/iftex/ifvtex.sty
+(/home/liyutong/texlive/2026/texmf-dist/tex/generic/iftex/iftex.sty)))
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/graphics/graphicx.sty
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/graphics/graphics.sty
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/graphics/trig.sty)
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/graphics-cfg/graphics.cfg)
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/graphics-def/xetex.def)))
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/booktabs/booktabs.sty)
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/tools/array.sty)
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/csquotes/csquotes.sty
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/etoolbox/etoolbox.sty)
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/csquotes/csquotes.def)
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/csquotes/csquotes.cfg))
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/biblatex-chicago/biblatex-chi
+cago.sty (/home/liyutong/texlive/2026/texmf-dist/tex/latex/hyperref/nameref.sty
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/refcount/refcount.sty
+(/home/liyutong/texlive/2026/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty)
+(/home/liyutong/texlive/2026/texmf-dist/tex/generic/infwarerr/infwarerr.sty))
+(/home/liyutong/texlive/2026/texmf-dist/tex/generic/gettitlestring/gettitlestri
+ng.sty
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/kvoptions/kvoptions.sty
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty))))
+(/home/liyutong/texlive/2026/texmf-dist/tex/generic/xstring/xstring.sty
+(/home/liyutong/texlive/2026/texmf-dist/tex/generic/xstring/xstring.tex))
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/biblatex/biblatex.sty
+(/home/liyutong/texlive/2026/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty)
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/logreq/logreq.sty
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/logreq/logreq.def))
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/base/ifthen.sty)
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/url/url.sty)
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/biblatex/blx-dm.def)
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/biblatex/blx-unicode.def)
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/biblatex/blx-compat.def)
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/biblatex/biblatex.def)
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/biblatex-chicago/chicago-note
+s.bbx)
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/biblatex-chicago/chicago-note
+s.cbx) (/home/liyutong/texlive/2026/texmf-dist/tex/latex/biblatex/biblatex.cfg)
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/biblatex/blx-case-expl3.sty
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/l3packages/xparse/xparse.sty)
+))) (/home/liyutong/texlive/2026/texmf-dist/tex/latex/xurl/xurl.sty
+xurl: Set penalties for biblatex
+) (/home/liyutong/texlive/2026/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/home/liyutong/texlive/2026/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.s
+ty) (/home/liyutong/texlive/2026/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+) (/home/liyutong/texlive/2026/texmf-dist/tex/latex/hycolor/hycolor.sty)
+(/home/liyutong/texlive/2026/texmf-dist/tex/generic/stringenc/stringenc.sty)
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(/home/liyutong/texlive/2026/texmf-dist/tex/generic/intcalc/intcalc.sty)
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/hyperref/puenc.def)
+(/home/liyutong/texlive/2026/texmf-dist/tex/generic/bitset/bitset.sty
+(/home/liyutong/texlive/2026/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty))
+) (/home/liyutong/texlive/2026/texmf-dist/tex/latex/hyperref/hxetex.def
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck
+.sty
+(/home/liyutong/texlive/2026/texmf-dist/tex/generic/uniquecounter/uniquecounter
+.sty))) (.build/main.aux)
+*geometry* driver: auto-detecting
+*geometry* detected driver: xetex
+
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/biblatex-chicago/cms-american
+.lbx
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/biblatex/lbx/american.lbx
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/biblatex/lbx/english.lbx))
+(/home/liyutong/texlive/2026/texmf-dist/tex/latex/biblatex/lbx/english.lbx))
+(.build/main.bbl) (.build/main.out) (.build/main.out) [1] [2] [3]
+(./evidence-table.tex) [4] [5] [6] (.build/main.aux) )
+Output written on .build/main.pdf (6 pages).
+Transcript written on .build/main.log.
