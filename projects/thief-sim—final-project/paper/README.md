@@ -4,7 +4,7 @@
 
 ## 文件清单
 
-- `design-paper.pdf`（及同步副本 `design-paper-draft.pdf`）：XeLaTeX + Biber 编译生成的 6 页美化版最终 PDF（芝加哥注释—书目制 `biblatex-chicago`）。
+- `design-paper.pdf`（及同步副本 `design-paper-draft.pdf`）：XeLaTeX + Biber 编译生成的 4 页美化版最终 PDF（正文约 1,250 英文词，芝加哥注释—书目制 `biblatex-chicago`）。
 - `overleaf-final.zip`（及同步副本 `overleaf-draft.zip`）：可直接上传 Overleaf 编译的完整源码压缩包（含 `main.tex`、`references.bib`、`evidence.csv`、`make_evidence_table.py`、`evidence-table.tex`、`schematic.png`）。
 - `main.tex`：LaTeX 主文档（含全部六个章节、架构图 Figure 1、自动生成的证据表 Table 1、芝加哥脚注与参考文献列表）。
 - `draft.md`：与 `main.tex` 完全同步的英文 Markdown 源稿（由 `build_draft.py` 自动转换为 `main.tex`）。
@@ -18,7 +18,7 @@
 1. 打开 [Overleaf](https://www.overleaf.com/project) → 点击 **New Project** → **Upload Project**。
 2. 上传 `paper/overleaf-final.zip`。
 3. 点击左上角 **Menu** → 将 **Compiler** 设为 **`XeLaTeX`**（必选，以支持 `xeCJK` 中文“据/推断/设”及 `biblatex-chicago`）。
-4. 点击 **Recompile**，即可生成与本地 `paper/design-paper.pdf` 一致的 6 页学术排版 PDF。
+4. 点击 **Recompile**，即可生成与本地 `paper/design-paper.pdf` 一致的 4 页学术排版 PDF。
 
 ## 本地一键重编译命令
 
