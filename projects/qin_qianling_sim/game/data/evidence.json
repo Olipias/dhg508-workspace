@@ -1,0 +1,58 @@
+{
+  "e_report": {
+    "title": "里典报案：丙上吊了",
+    "short": "里典报案，说丙上吊",
+    "status": "inferred",
+    "source": "S13",
+    "note": "按《封诊式·经死》的报案格式拟写；不是原简。"
+  },
+  "e_autopsy": {
+    "title": "验尸：舌出、绳痕、矢溺",
+    "short": "验尸记录",
+    "status": "inferred",
+    "source": "S13",
+    "note": "验尸格式据《封诊式·经死》；这具尸身的具体情形是剧情设定。"
+  },
+  "e_ledger": {
+    "title": "仓账少了三十石",
+    "short": "三十石对不上",
+    "status": "inferred",
+    "source": "S03",
+    "note": "账目格式据里耶稟食简；‘少三十石’为剧情设定。"
+  },
+  "e_post": {
+    "title": "送郡的时间",
+    "short": "案卷送郡的时间",
+    "status": "evidenced",
+    "source": "S07",
+    "note": "《行书律》要求记发信/收信时间；具体时辰是剧情设定。须由邮人的证词确认，才入案卷。"
+  },
+  "e_wound": {
+    "title": "后脑有淤伤，粮袋旁有血",
+    "short": "后脑淤伤、粮袋血",
+    "status": "inferred",
+    "source": "S13",
+    "note": "《封诊式·经死》要求看有没有别的伤；这处伤是剧情设定。须由仓啬夫的证词确认，才入案卷。"
+  },
+  "e_wife": {
+    "title": "丙妻：账对不上，他们要拿他顶",
+    "short": "丙妻的口供",
+    "status": "inferred",
+    "source": "S13",
+    "note": "《封诊式·经死》说‘自杀者必先有故，问其同居’；口供内容为剧情设定。只能通过问丙妻获得。"
+  },
+  "e_register": {
+    "title": "丙的户籍：士伍、仓佐、妻女",
+    "short": "丙的户籍",
+    "status": "inferred",
+    "source": "S10",
+    "note": "户籍格式据里耶名籍类简；具体人物为剧情设定。"
+  },
+  "e_neighbor": {
+    "title": "邻居看见里典那晚进过仓",
+    "short": "里典那晚进过仓",
+    "status": "inferred",
+    "source": "S13",
+    "note": "剧情设定；只能通过问里典获得，用于触发‘四邻/典老’连坐的判断。"
+  }
+}

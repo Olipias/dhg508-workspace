@@ -21,6 +21,7 @@ __pycache__/
 
 # JavaScript/TypeScript
 node_modules/
+.vite/
 dist/
 build/
 coverage/

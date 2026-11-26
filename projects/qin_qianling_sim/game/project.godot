@@ -1,0 +1,24 @@
+; Engine configuration file.
+config_version=5
+
+[application]
+config/name="迁陵·廿六年五月"
+run/main_scene="res://Main.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+config/icon="res://assets/ui/seal.png"
+
+[autoload]
+GameState="*res://scripts/GameState.gd"
+
+[display]
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
+window/size/resizable=true
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/default_filters/use_nearest_mipmap_filter=false
+environment/defaults/default_clear_color=Color(0.05, 0.045, 0.04, 1)

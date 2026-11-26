@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>迁陵 · 廿六年五月</title>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<div id="stage">
+  <canvas id="game" width="1280" height="720"></canvas>
+
+  <div id="hud" class="hidden">
+    <div id="loc">迁陵县 · 县廷</div>
+    <div id="clock">廿六年五月庚子 · 水下三刻</div>
+    <div id="count">案卷 0/6</div>
+    <button id="btn-submit">交案卷</button>
+    <button id="btn-evidence">材料 Tab</button>
+    <button id="btn-glossary">名词</button>
+    <button id="btn-law">律令</button>
+  </div>
+  <canvas id="minimap" width="440" height="294" aria-label="迁陵县示意图"></canvas>
+  <div id="objective" class="hidden"></div>
+  <div id="prompt" class="hidden"></div>
+  <div id="toast" class="hidden"></div>
+
+  <div id="dialogue" class="panel hidden">
+    <div class="dlg-head">
+      <span id="npc-name"></span><span id="npc-office"></span>
+      <button id="dlg-close" class="icon">×</button>
+    </div>
+    <div id="speech"></div>
+    <div class="dlg-row">
+      <input id="player-input" autocomplete="off" placeholder="说些什么……">
+      <button data-topic="ask">询问</button>
+      <button data-topic="press">追问</button>
+      <button data-topic="sideways">旁敲侧击</button>
+      <button id="btn-refs">考据</button>
+    </div>
+    <div id="dlg-hint">回车发送 · Esc 关闭 · Tab 材料 · H 名词</div>
+  </div>
+
+  <aside id="evidence" class="panel hidden">
+    <div class="panel-head"><span>案卷 · 已得</span><button id="ev-close" class="icon">×</button></div>
+    <div id="evidence-list"></div>
+  </aside>
+
+  <div id="modal" class="overlay hidden">
+    <div class="slips">
+      <h2 id="doc-title"></h2>
+      <div id="doc-sub"></div>
+      <div id="doc-body"></div>
+      <div id="doc-source" class="hidden"></div>
+      <div class="tabs" id="doc-tabs"></div>
+      <div class="modal-actions">
+        <button id="btn-original">看原文</button>
+        <button id="btn-kaoju">考据</button>
+        <button id="btn-doc-close">合上</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="form" class="overlay hidden">
+    <div class="form-card">
+      <h2>交案卷</h2>
+      <p class="muted">守丞先看四样：报案、验尸、账、送郡时间。再问你：这条命，算哪一种死？</p>
+      <div id="form-checks"></div>
+      <div class="verdict">
+        <label for="verdict">怎么定这条命？</label>
+        <select id="verdict">
+          <option value="suicide">自杀（上吊）</option>
+          <option value="homicide">贼杀（故意杀人）</option>
+          <option value="fight">斗杀（斗殴杀人）</option>
+          <option value="uncertain">死难审（验不明白）</option>
+        </select>
+      </div>
+      <div class="blame">
+        <div class="muted">要连累谁？（可以不写）</div>
+        <label><input type="checkbox" id="blame-lidian"> 把里典/四邻写进案卷（知情不报）</label>
+        <label><input type="checkbox" id="blame-cang"> 把仓啬夫写进案卷（账目不清）</label>
+      </div>
+      <div class="post-time">
+        <div class="muted">送郡时间</div>
+        <label><input type="radio" name="posttime" value="true" checked> 照实写：水下三刻</label>
+        <label><input type="radio" name="posttime" value="false"> 听邮人的：写早一刻</label>
+      </div>
+      <div class="modal-actions">
+        <button id="btn-submit-form">交 上</button>
+        <button id="btn-cancel-form">再想想</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="intro" class="overlay">
+    <div class="intro-card">
+      <h1>迁陵 · 廿六年五月</h1>
+      <div class="sub" id="intro-sub">新令史的第一天</div>
+      <p id="intro-body"></p>
+      <div class="muted small">操作：WASD / 方向键行走　E 交谈或查看　Tab 材料　H 名词　Esc 关闭</div>
+      <button id="btn-start" class="big">进门报到</button>
+    </div>
+  </div>
+
+  <div id="end" class="overlay hidden">
+    <div class="end-card">
+      <h1 id="end-title"></h1>
+      <p id="end-body"></p>
+      <div id="end-missing" class="missing"></div>
+      <p id="end-lesson" class="lesson"></p>
+      <button id="btn-restart" class="big">再值一天班</button>
+    </div>
+  </div>
+</div>
+<script src="./app.js"></script>
+</body>
+</html>
